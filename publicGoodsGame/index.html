@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+
+<!-- The 'peeps' used are taken from ncase.me/trust (https://github.com/ncase/trust/tree/gh-pages/assets) -->
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name = "viewport" content = "width=device-width, initial-scale=1">
+		
+		<meta name = "keywords" content = "Public Goods Game, Simulation, IIT, Kanpur">
+		<meta name = "Description" content = "A simulation of the public goods game">
+		<meta name = "theme-color" content = "#103d87">
+		
+		<title>PGG</title>
+		
+		<!-- js libraries -->
+		<script src = "js/lib/jquery-3.2.1.min.js"></script>
+		<script src="js/lib/pixi.min.js"></script>
+		<script src="js/lib/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+		
+		<!-- styles -->
+		<link href="assets/icons/fa/css/all.min.css" rel="stylesheet">
+		<link rel="stylesheet" href="js/lib/jquery-ui-1.12.1.custom/jquery-ui.min.css">
+		
+		<!-- my style -->
+		<link type="text/css" rel="stylesheet" href="css/style.css" />
+		
+		<!-- my code -->
+		<script src = "js/base.js"></script>
+		<script src = "js/slider_init.js"></script>
+		<script src = "js/core.js"></script>
+		<script>
+		</script>
+	</head>
+
+	<body>
+	<div id = "main">
+		<div id = "playground">
+			<!--canvas width="1029" height="754" style="touch-action: none; cursor: inherit; position: absolute; display: block; width: 1029.12px; height: 754px;">
+				This is the element expected to be genereated by PIXI.
+			</canvas-->
+			<div id = "rno">0</div>
+			<div class = "api">
+				<!-- All text/buttons that are present over the playground's canvas come here -->
+				<div id = "balance"></div>
+				<div class = "dynamic"></div> <!-- Must be kept empty-->
+				<div id = "control">
+					<button id = "run_sim" class = "active"><i class= "fas fa-play"></i>Run</button>
+					<button id = "stop_sim" class = "active"><i class= "fas fa-pause"></i>Stop</button>
+					<button id = "step_sim" class = "active"><i class= "fas fa-step-forward"></i>Step</button>
+					<button id = "restart_sim" class = "active"><i class= "fas fa-step-forward"></i>Restart</button>
+					<!-- Rounded switch, credits: W3schools -->
+					<label class="switch" id = "punishment">
+						<span class="desc">Punishment Disabled</span>
+						<input type="checkbox">
+						<span class="slider round"></span>
+					</label>
+					<label class="switch" id = "hats">
+						<span class="desc">Identities Invisible</span>
+						<input type="checkbox">
+						<span class="slider round"></span>
+					</label>
+					<div class="centered" id = "contrib" autocomplete = "off">
+					  <div class="group">
+						<input type="number" id="cinput" required="required" step = "any"/>
+						<label for="cinput">Contribution</label>
+						<div class="bar"></div>
+					  </div>
+					</div>
+					<div class="centered" id = "nplayers" autocomplete = "off">
+					  <div class="group">
+						<input type="number" id="name" required="required" min = "0" max ="18"/>
+						<label for="name">Human Players</label>
+						<div class="bar"></div>
+					  </div>
+					</div>
+
+					<!-- Horizontal Slider, jquery-ui -->
+					<!--div id = "pay_slider">
+						<input type="number" class="api" readonly>
+						<input type="number" class="api_true" style = "Display:None;" readonly>
+						<div class ="man_slider" style = "width: 240px;"></div>
+					</div-->
+					<button id = "ok" class = "active">OK</button>
+					
+					<!-- Vertical Sliders, jquery-ui -->
+					<div>
+						<input type="text" class="pop_count" readonly>
+						<input type="text" class="pop_count" readonly>
+						<input type="text" class="pop_count" readonly>
+						<input type="text" class="pop_count" readonly>
+					
+						<div class = "pop_slider" style = "height: 120px;"></div>
+						<div class = "pop_slider" style = "height: 120px;"></div>
+						<div class = "pop_slider" style = "height: 120px;"></div>
+						<div class = "pop_slider" style = "height: 120px;"></div>
+					</div>
+
+					<!-- Container for all the penalty inputs -->
+					<div id = "penalties">
+					</div>
+				</div>
+				<div id = "variants"></div>
+			</div>
+		</div>
+	</div>
+	<div id = "msg-container">
+		<div id = "warning" style = "Display:None;"><i class= "fas fa-exclamation-triangle"></i><span></span></div>
+		<div id = "info" style = "Display:None;"><span></span></div>
+	</div>
+	<div id = "stdout" style = "Display:None;"></div>
+	
+	</body>
+</html>

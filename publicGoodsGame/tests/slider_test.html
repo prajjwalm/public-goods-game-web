@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>jQuery UI Slider - Vertical slider</title>
+  <link rel="stylesheet" href="../js/lib/jquery-ui-1.12.1.custom/jquery-ui.min.css">
+  <link rel="stylesheet" href="/resources/demos/style.css">
+  <script src="../js/lib/jquery-3.2.1.min.js"></script>
+  <script src="../js/lib/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+  <script>
+  $( function() {
+    $( "#slider-vertical" ).slider({
+      //orientation: "vertical",
+      range: "min",
+      min: 0,
+      max: 100,
+      value: 60,
+      slide: function( event, ui ) {
+        $( "#amount" ).val( ui.value );
+      }
+    });
+    $( "#amount" ).val( $( "#slider-vertical" ).slider( "value" ) );
+  } );
+  </script>
+  <style>
+	#slider-vertical span:focus {
+			outline:0;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+
+	}
+  </style>
+</head>
+<body>
+ 
+<p>
+  <label for="amount">Volume:</label>
+  <input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;">
+</p>
+ 
+<div id="slider-vertical" style="width:200px;"></div>
+ 
+ 
+</body>
+</html>
