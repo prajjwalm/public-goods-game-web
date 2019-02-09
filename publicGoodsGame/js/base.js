@@ -1,6 +1,6 @@
 /* global variables */
 var RUN = false;
-var POP_CNTS = [4, 5, 5, 3];
+var POP_CNTS = [4, 5, 5, 3, 2];
 var HUMAN = 0;
 var PUNISH = false;
 var HATS = true;

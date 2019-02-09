@@ -1,6 +1,6 @@
 
 $( function() {
-	for (var i = 0 ; i < 4; i++){
+	for (var i = 0 ; i < 5; i++){
 		$( "#playground .api #control .pop_slider:eq("+i+")" ).css({
 			"top": "70vh",
 			"left": "" + (800 + 50 * i) + "px"
@@ -10,7 +10,7 @@ $( function() {
 			"left": "" + (800 + 50 * i) + "px"
 		});
 	}
-	for (var i = 0 ; i < 4; i++){
+	for (var i = 0 ; i < 5; i++){
 		let j = i;
 		$( "#playground .api #control .pop_slider:eq("+j+")" ).slider({
 		  orientation: "vertical",

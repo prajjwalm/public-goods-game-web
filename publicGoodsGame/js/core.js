@@ -57,15 +57,14 @@ function Simpleton(vol, hf, cash) {
 	this.opinion = {};						// opinion of others
 	
 	// constants
-	this.expt = 0.05;						// expectation from others
-	this.cutoff_opinion = 0.1;				// below which the good simpleton will request punishment
-	this.punishment_ratio = 0.6;			// fraction of cash which will be sacrificed for punishment (only for good simpletons)
+	this.cutoff_opinion = 0.2;				// below which the good simpleton will request punishment
+	this.punishment_ratio = 0.4;			// fraction of cash which will be sacrificed for punishment (only for good simpletons)
 	this.opinion_mf = 1.25;					// multiplicative factor attached with the opinions of others (only for good simpletons)
 	this.avghf_mf = 1.25;					// multiplicative factor attached with the honesty of others, ie. a guy with 0.8 contrib is all good
-	this.lim = 0.2;							// beyond this punishment hurts
-	this.hf_jump = 0.5;						// jump in hf after punishment (wrt volatility)
+	this.lim = 0.1;							// beyond this punishment hurts
+	this.hf_jump = 0.7;						// jump in hf after punishment (wrt volatility)
 	this.cutoff_respect = 0.4;				// beyond this some respect is left even after being punished by the guy
-	this.opinion_vol = 3;					// mf of vol for opinions
+	this.opinion_vol = 2;					// mf of vol for opinions
 	this.max_vol = 0.5;
 	this.min_vol = 0.01;
 	this.vol_delta_factor = 0.4;
@@ -135,11 +134,11 @@ function Simpleton(vol, hf, cash) {
 			print(this.id + ": ");
 			for (var Id in this.opinion) {
 				if (this.opinion.hasOwnProperty(Id)) {
-					print(this.opinion[Id] + ", ");
+					// print(this.opinion[Id] + ", ");
 					if (this.opinion[Id] < this.cutoff_opinion){
 						list[Id] = 1;
 						n += 1;
-						this.opinion[Id] += this.cutoff_opinion * 2;
+						this.opinion[Id] += this.cutoff_opinion * 1.25;
 					}
 				}
 			}
@@ -165,10 +164,6 @@ function Simpleton(vol, hf, cash) {
 			if (this.hf > 1) this.hf = 1;
 		}
 	}
-	
-	this.display = function() {
-		print("Simpleton {V: " + this.vol + ", Cash: " + this.cash + ", prev contrib.: " + this.contrib + ", HF: " + this.hf +'}<br />');
-	}
 }
 
 function Accountant(hf, cash) {
@@ -183,10 +178,10 @@ function Accountant(hf, cash) {
 	this.opinion = {};
 	
 	// constants
-	this.vol = 1;							// as fickle as can be, always (i.e hf changes entirely to final value)
-	this.cutoff_opinion = 0.2;
-	this.punishment_ratio = 0.5;			// fraction of cash which will be sacrificed for punishment (only for good simpletons)
-	this.opinion_vol = 0.15;				// steps by which the opinion changes
+	this.vol = 1;
+	this.cutoff_opinion = 0.1;
+	this.punishment_ratio = 0.3;		// must be < 0.5
+	this.opinion_vol = 0.15;
 	this.safety = 0.1;
 	this.hf_jump = 2;
 	this.punishments = 3;
@@ -200,8 +195,7 @@ function Accountant(hf, cash) {
 	}
 	
 	this.call = function (society) {
-		// decides contribution during call
-		this.contrib = this.cash * this.hf;										// contribute as much as he trusts
+		this.contrib = this.cash * this.hf;
 		return this.contrib;
 	}
 	
@@ -216,16 +210,17 @@ function Accountant(hf, cash) {
 		var total_cash = 0;
 		for (var i = 0; i < society.size; i++) { total_contrib += society.member[i].contrib; }
 		for (var i = 0; i < society.size; i++) { total_cash += society.member[i].cash; }
-		var contrib_rate = (total_contrib - this.contrib) / (total_cash - this.cash);
+		var contrib_rate = (total_contrib - this.contrib + 1) / (total_cash - this.cash + 1);
 		this.hf = bound(0, contrib_rate, 1);
 		
-		// opinion: binary segregation on whether contribution is above the avg
+		// opinion: binary segregation on whether contribution is above his own
 		for (var i = 0; i < society.size; i++) {
 			let Id = society.member[i].id;
 			if (Id != this.id) {
-				if (society.member[i].contrib / society.member[i].cash >= this.contrib / this.cash * 1.1) {
+				if (society.member[i].contrib / (society.member[i].contrib + society.member[i].cash + 1) >= this.contrib / (this.contrib + this.cash + 1)) {
 					this.opinion[Id] += this.opinion_vol;
-				} else if (society.member[i].contrib / society.member[i].cash <= this.contrib / this.cash * 0.9){
+				}
+				else if (society.member[i].contrib / (society.member[i].contrib + society.member[i].cash + 1) <= this.contrib / (this.contrib + this.cash + 1) * 0.9) {
 					this.opinion[Id] -= this.opinion_vol;
 				}
 				this.opinion[Id] = bound(0, this.opinion[Id], 1);
@@ -243,14 +238,17 @@ function Accountant(hf, cash) {
 			for (var Id in this.opinion) {
 				if (this.opinion.hasOwnProperty(Id)) {
 					if (this.opinion[Id] < this.cutoff_opinion){
-						list.push(Id);
+						list.push(Id);												// shortlists guys that qualify for punishment
 					}
 				}
 			}
-			if (list.length>0) {
-				var target_id = list[Math.floor(Math.random()*list.length)];
-				this.opinion[target_id] += this.cutoff_opinion;
-				target[target_id] = this.cash * this.punishment_ratio;
+			if (list.length > 0) {
+				var target_id1 = list[Math.floor(Math.random()*list.length)];		// selects one randomly from them
+				var target_id2 = list[Math.floor(Math.random()*list.length)];		// either two minor punishments will be dealt, or one major punishment
+				this.opinion[target_id1] += this.cutoff_opinion * 1.5;
+				this.opinion[target_id2] += this.cutoff_opinion * 1.5;
+				target[target_id1] = this.cash * this.punishment_ratio;
+				target[target_id2] = this.cash * this.punishment_ratio;
 				this.punishments -= 1;
 			}
 		}
@@ -261,16 +259,115 @@ function Accountant(hf, cash) {
 		// hatred
 		this.opinion[punisherId] = 0;
 
-		this.vol = bound(0, this.vol + 0.2, 1);
-
 		// fear
 		var punisherIdx = get_member_by_id(society, punisherId);
+			// if present, guilt makes them perform better for one round
 		if (loss > this.lim && this.contrib < society.member[punisherIdx].contrib) this.hf += this.hf_jump * this.vol;
 		
 	}
+}
+
+function Rational(cash) {
+	// defined by safe play and envy
+	this.strategy = "r";
+	this.vol = 0;
+	this.id = 0;
 	
-	this.display = function() {
-		print("Simpleton {V: " + this.vol + ", Cash: " + this.cash + ", prev contrib.: " + this.contrib + ", HF: " + this.hf +'}<br />');
+	this.cash = cash;
+	this.contrib = 0;
+	this.opinion = {};
+	this.punishment_cntr = {};
+	this.avg_hf = 0.3;
+	this.var_hf = 0.1;
+	this.sup_hf = 0.5;
+	this.zero_freq = 4;
+	this.rfreq = 5;
+	this.limloss = 0.33;
+	this.cumloss = 0;
+	
+	this.init = function (society) {
+		for (var i = 0; i < society.size; i++) {
+			if (society.member[i].id != this.id) {
+				this.opinion[society.member[i].id] = 0.5;
+				this.punishment_cntr[society.member[i].id] = 0;
+			}
+		}
+	}
+	
+	this.call = function (society) {
+		var x = Math.random();
+		if (x < 1 / this.zero_freq) {
+			this.contrib = 0;
+		} else if (x > 1 - 1 / (2 * this.zero_freq)) {
+			this.contrib = this.sup_hf;
+		} else {
+			this.contrib = (this.avg_hf + x * this.var_hf) * this.cash;
+		}
+		if (this.contrib > this.cash) this.contrib = this.cash;
+		return this.contrib;
+	}
+	
+
+	this.payoff_listener = function (society, cash_back) {
+		if (cash_back < this.contrib) {
+			this.avg_hf *= 0.9;
+			this.var_hf *= 0.9; 
+		} else {
+			for (var i = 0; i < society.size; i++) {
+				if (society.member[i].id != this.id) {
+					this.punishment_cntr[society.member[i].id] -= 0.5;
+					if (this.punishment_cntr[society.member[i].id] < 0) this.punishment_cntr[society.member[i].id] = 0;
+				}
+			}
+		}
+		// keep opinions (as an excuse for punishment rather than a reason)
+		for (var i = 0; i < society.size; i++) {
+			let Id = society.member[i].id;
+			if (Id != this.id) {
+				var contrib_ratio = (society.member[i].contrib + 1) / (society.member[i].cash + society.member[i].contrib + 1);
+				if (contrib_ratio < this.avg_hf) {
+					this.opinion[Id] = bound(0, this.opinion[Id] - 0.2, 1);
+				} else if (contrib_ratio > this.sup_hf){
+					this.opinion[Id] = bound(0, this.opinion[Id] + 0.1, 1);
+				}
+			}
+		}
+		this.cumloss = 0;
+	}
+	
+	this.request_punishment = function (society) {
+		var target = {};
+		for (var Id in this.opinion) {
+			if (this.opinion.hasOwnProperty(Id)) {
+				if (this.punishment_cntr[Id] >= 1){
+					target[Id] = this.cash * 0.2;
+				}
+			}
+		}
+		
+		if (society.r_no % this.rfreq == 0) {
+			for (var i = 0; i < 3; i++) {
+				let lid = society.member[society.leaderboard[i]].id;
+				if (this.opinion[lid] <= 0.2) {
+					if (target.hasOwnProperty(lid)) {
+						target[lid] += 2 * (0.12 - 0.02 * i) * this.cash;
+					} else {
+						target[lid] = (0.12 - 0.02 * i) * this.cash;
+					}
+				}
+			}
+		}
+		return target;
+	}
+	
+	this.punishment_listener = function (society, punisherId, loss) {
+		this.punishment_cntr[punisherId]++;
+		this.cumloss += loss;
+		if (this.cumloss > this.cash * this.limloss) {
+			this.avg_hf = 1 - (1 - this.avg_hf) * 0.9;
+			this.avg_hf = 1 - (1 - this.avg_hf) * 0.9;
+			this.cumloss = 0;
+		}
 	}
 }
 
@@ -282,8 +379,6 @@ function Analyst(vol, cash) {
 	this.max_vol = 0.5;
 	this.min_vol = 0.01;
 	this.vol_delta_factor = 0.4;
-	this.jumps = 3;
-	this.bait_rate = 0.2;
 	
 	// members
 	this.vol = vol;
@@ -292,11 +387,14 @@ function Analyst(vol, cash) {
 	this.cutoff = cash * (1 - vol) * 0.2;	// cutoff: when an analyst will be triggered, and how much does he contribute then
 	this.pcutoff = cash * (1 - vol) * 0.1;	// revenge when targets have cash over this, ie. enough to hurt
 	this.r_expenditure = 0.4;				// percent of cash that may be used for revenge
+	this.bait_rate = 0.2;					// factor of cash to be used for bait	
+	this.jumps = 4;							// no of non-trivial contribs
 	this.contrib = 0;
 	this.cash = cash;
-	this.wrath_factor = 3;
+	this.wrath_factor = 5;
+	this.p_bonus = 0;						// 0.05 after punishment, so as to give the impression of improvement
 	this.pacification_factor = 1.36;
-	this.n_punishments = 3;
+	this.n_punishments = 5;
 	this.targets = [];
 	this.opinion = {};						// either 0 or 1, 0 only if punished by
 	this.punishments;
@@ -312,17 +410,18 @@ function Analyst(vol, cash) {
 	
 	this.call = function (society) {
 		var avg = this.avg;
-		this.contrib = this.cash * 0.1 * this.vol * Math.random();
+		this.contrib = this.cash * (0.1 * this.vol * Math.random() + this.p_bonus);
 		if (society.r_no > 1) {
 			if (this.pavg > avg + this.cutoff || (avg < this.cutoff && this.pavg > this.cutoff)) {
 				if (this.jumps > 0){
-					this.contrib = avg + this.cutoff;										// decline state: push up morale
+					this.contrib += avg + this.cutoff;										// decline state: push up morale
 					if (this.contrib > this.cash)											// should almost never be true
 						this.contrib = this.cash;	
 					this.jumps -= 1;
 				}
 			} 	
 		}
+		p_bonus = 0;
 		return this.contrib;
 	}
 	
@@ -382,13 +481,10 @@ function Analyst(vol, cash) {
 			this.punishments[punisherIdx] = 3;
 		}
 		// fear: none
+		this.p_bonus = 0.05;
+		this.jumps -= 1;
+		if (this.jumps < 0) this.jumps = 0;
 	}
-	
-	
-	this.display = function() {
-		print("Analyst {V: " + this.vol + ", cutoff: " + this.cutoff + ", Cash: " + this.cash + ", prev contrib.: " + this.contrib + ", Jumps: " + this.jumps +'}<br />');
-	}
-	
 }
 
 function Human(cash) {
@@ -417,12 +513,11 @@ function Human(cash) {
 }
 
 function BaseSoc(pop, mf, icash, max_r) {
-	// a hidden society, no one sees anyone elses contribution, though they know the number of members, and the multiplicative factor
 	// an equal society, all dividents are equally shared (as in a cooperative)
 	
 	// Member Variables
 	this.member = [];
-	this.size = pop.ns0 + pop.ns1 + pop.nc + pop.na;
+	this.size = pop.ns0 + pop.ns1 + pop.nc + pop.nr + pop.na;
 
 	// shuffle members
 	perm = [];
@@ -430,11 +525,10 @@ function BaseSoc(pop, mf, icash, max_r) {
 	for (var i = 0; i < pop.ns1; i++) perm.push(1);
 	for (var i = 0; i < pop.nc; i++) perm.push(2);
 	for (var i = 0; i < pop.na; i++) perm.push(3);
+	for (var i = 0; i < pop.nr; i++) perm.push(4);
 	perm = shuffle(perm);
 
-	for (var ih = 0; ih < HUMAN; ih++) { 
-		this.member.push(new Human(icash));
-	}
+	for (var ih = 0; ih < HUMAN; ih++) { this.member.push(new Human(icash)); }
 	
 	for (var i = 0; i < this.size; i++) {
 		switch(perm[i]) {
@@ -450,18 +544,29 @@ function BaseSoc(pop, mf, icash, max_r) {
 		case 3:
 			this.member.push(new Analyst(Math.random() * 0.15 + 0.05, icash));
 			break;
+		case 4:
+			this.member.push(new Rational(icash));
+			break;
+		default:
+			alert("Unrecognized character");
 		}
 	}
 	
 	this.size+=HUMAN;
 
-	for (var i = 0; i < this.size; i++) this.member[i].id = i+1;	// ie. idx = id - 1;
+	for (var i = 0; i < this.size; i++) this.member[i].id = i+1;	// ie. idx = id - 1; maybe redundant if I make opinion matrices, but the opinion should
+																	// be with the guy, not the society
 	for (var i = 0; i < this.size; i++) this.member[i].init(this);
 	
 	this.r_no = 0;
 	this.max_r = max_r;
 	this.mf = mf;
 	this.balance = 0;
+	
+	this.leaderboard = []
+	for (var i = 0; i < this.size; i++) {
+		this.leaderboard.push(i);
+	}
 	
 	// Constants
 	this.punishment_cost = 0.2;										// how much of the punishment is inficted on the punisher
@@ -530,7 +635,7 @@ function BaseSoc(pop, mf, icash, max_r) {
 					// honesty and volatility bar
 					if (this.member[j].strategy != "x") {
 						this.vBar[j].width = this.member[j].vol * vBar_maxlen;
-						if (this.member[j].strategy != "a")	this.hBar[j].width = this.member[j].hf * hBar_maxlen;
+						if (this.member[j].strategy != "a" || this.member[j].strategy != "r")	this.hBar[j].width = this.member[j].hf * hBar_maxlen;
 					}
 				}
 			} else if (i < this.size && i >= 0){
@@ -544,11 +649,16 @@ function BaseSoc(pop, mf, icash, max_r) {
 				});
 				
 				if (this.member[i].strategy != "x") {
-					if (this.member[i].strategy != "a")this.hBar[i].width = this.member[i].hf * hBar_maxlen;
+					if (this.member[i].strategy != "a" || this.member[i].strategy != "r") this.hBar[i].width = this.member[i].hf * hBar_maxlen;
 					this.vBar[i].width = this.member[i].vol * vBar_maxlen;
 				}
 			}
 		}
+	}
+	
+	this.update_leaderboard = function () {
+		this.leaderboard.sort((i, j) => this.member[j].cash - this.member[i].cash);		// desc order
+		// console.log(this.leaderboard);
 	}
 	
 	this.call = async function () {
@@ -561,12 +671,6 @@ function BaseSoc(pop, mf, icash, max_r) {
 			var c = this.member[i].call(this);
 			this.member[i].cash -= c;
 			this.balance += c;
-			if (isNaN(this.member[i].cash)) {
-				this.member[i].cash = 0;
-				console.log("Nan recorded");
-			} if (isNaN(this.balance)) {
-				console.log("Nan bal");
-			}
 
 			// Final Graphics rendering
 			await this.updateUI(balance = true, member = true, i);
@@ -603,16 +707,13 @@ function BaseSoc(pop, mf, icash, max_r) {
 	
 	this.justice = async function () {
 		perm = []
-		for (var i = 0; i < this.size; i++) {
-			perm.push(i);
-		}
+		for (var i = 0; i < this.size; i++) { perm.push(i);	}
 		perm = shuffle(perm);
-		for (var i = 0; i < this.size; i++) {																		// iterate over punisher
 		
+		for (var i = 0; i < this.size; i++) {																		// iterate over punisher
 			var red_list = this.member[perm[i]].request_punishment(this);
 			for (var Id in red_list) {
 				if (red_list.hasOwnProperty(Id)) {																	// iterate over punished
-					if (this.member[perm[i]].strategy === "a") alert("revenge");
 					let idx = get_member_by_id(this, Id);
 					if (this.member[perm[i]].cash > red_list[Id] * this.punishment_cost && this.member[idx].cash > 0){	// if punishment executable
 						// initial graphics rendering
@@ -638,7 +739,8 @@ function BaseSoc(pop, mf, icash, max_r) {
 						// if there is a feeling of (un)deserved punishment...
 						for (var ii = 0; ii < this.size; ii++) {
 							if (this.member[ii].strategy != "x") {
-								this.member[ii].opinion[this.member[perm[i]].id] -= (this.member[ii].opinion[Id] - 0.5);	
+								this.member[ii].opinion[this.member[perm[i]].id] -= (this.member[ii].opinion[Id] - 0.5);
+								// if (this.member[ii].strategy === "s") this.member[ii].hf += (this.member[ii].opinion[Id] - 0.5) * 0.1;
 								// so opinions can go upto +- 50% based on punishment decisions
 								// everyone feels a bit of pity, except for the really bad
 								if (ii != perm[i] && ii != idx) {
@@ -651,7 +753,11 @@ function BaseSoc(pop, mf, icash, max_r) {
 						this.updateUI(balance = false, member = true, perm[i]);
 						this.updateUI(balance = false, member = true, idx);
 						
-						await sleep(this.justice_sleep);
+						if (this.member[idx].strategy === "x") {
+							await sleep(this.justice_sleep * 2);
+						} else {
+							await sleep(this.justice_sleep);
+						}
 						
 						// final graphics rendering
 						$("#playground div.api div.dynamic div.member_cash:eq("+perm[i]+")").css({ "color": "#000"});
@@ -674,9 +780,10 @@ function BaseSoc(pop, mf, icash, max_r) {
 					if (this.member[i].hf > 0.5) this.peep.push(new Sprite(tournament_peep_t["tournament_peep0000"]));
 					else this.peep.push(new Sprite(tournament_peep_t["tournament_peep0001"]));
 				}
-				if (this.member[i].strategy === "c") this.peep.push(new Sprite(tournament_peep_t["tournament_peep0004"]));
-				if (this.member[i].strategy === "a") this.peep.push(new Sprite(tournament_peep_t["tournament_peep0003"]));
-				if (this.member[i].strategy === "x") this.peep.push(new Sprite(splash_peep_t["splash_peep0000"]));
+				else if (this.member[i].strategy === "c") this.peep.push(new Sprite(tournament_peep_t["tournament_peep0004"]));
+				else if (this.member[i].strategy === "a") this.peep.push(new Sprite(tournament_peep_t["tournament_peep0003"]));
+				else if (this.member[i].strategy === "r") this.peep.push(new Sprite(tournament_peep_t["tournament_peep0006"]));
+				else if (this.member[i].strategy === "x") this.peep.push(new Sprite(splash_peep_t["splash_peep0000"]));
 			}
 			
 			for (var i = 0; i < this.size; i++) {
@@ -765,7 +872,7 @@ function BaseSoc(pop, mf, icash, max_r) {
 								(center.y - uiRadius * Math.sin(Math.PI * i * 2/this.size) - memcash_text_height/2 + member_cash_offset.y - 2));
 								
 			if (this.member[i].strategy != "x") {			// turn the new Graphics into a rect if the peep is not a human
-				if (this.member[i].strategy != "a"){
+				if (this.member[i].strategy != "a" || this.member[i].strategy != "r"){
 					this.hBar[i].beginFill(0xFF3300);
 					this.hBar[i].drawRect(0,0,hBar_maxlen*(this.member[i].hf + 0.01), 3);
 					this.hBar[i].endFill();
@@ -835,11 +942,12 @@ function BaseSoc(pop, mf, icash, max_r) {
 			while (RUN) {
 				this.r_no += 1;
 				$("#rno").text(this.r_no);
+
 				await this.call();
 				await this.payoff();
-				if (this.punish_enable) {
-					await this.justice();
-				}
+				if (this.punish_enable) await this.justice();
+				this.update_leaderboard();
+				
 				if (!RUN) {
 					$("#run_sim").prop('disabled', false);
 					$("#step_sim").prop('disabled', false);
@@ -852,9 +960,7 @@ function BaseSoc(pop, mf, icash, max_r) {
 				$("#rno").text(this.r_no);
 				await this.call();
 				await this.payoff();
-				if (this.punish_enable) {
-					await this.justice();
-				}	
+				if (this.punish_enable)	await this.justice();
 			}
 		}
 		$("#restart_sim").prop('disabled', false);
@@ -882,7 +988,7 @@ function BaseSoc(pop, mf, icash, max_r) {
 // Render Initial Graphics
 var app = new Application({ 
     antialias: true,    // default: false
-    transparent: true, // default: false
+    transparent: true, 	// default: false
     resolution: 1       // default: 1
   });
 
@@ -891,7 +997,7 @@ $(Document).ready(function () {
 	app.renderer.view.style.position = "absolute";
 	app.renderer.view.style.display = "block";
 	app.renderer.autoResize = true;
-	app.renderer.resize(1000, window.innerHeight);
+	app.renderer.resize(1080, window.innerHeight);
 	
 	$("#playground").append(app.view);									// initialize playground graphics
 	$("#stop_sim").prop('disabled', true);
@@ -907,7 +1013,7 @@ $(Document).ready(function () {
 });
 
 function main() {
-	// create population marker
+	// create population markers
 	hats_t = resources["assets/images/sandbox_hats.json"].textures;
 	
 	var hats = [];
@@ -915,6 +1021,7 @@ function main() {
 	hats.push(new Sprite(hats_t["peep_hat0000"]));
 	hats.push(new Sprite(hats_t["peep_hat0004"]));
 	hats.push(new Sprite(hats_t["peep_hat0003"]));
+	hats.push(new Sprite(hats_t["peep_hat0006"]));
 	
 	for (var i = 0; i < hats.length; i++) {
 		hats[i].anchor.set(0.35,0.6);
@@ -923,22 +1030,23 @@ function main() {
 		app.stage.addChild(hats[i]);
 	}
 	
-	// Create Required Society (max pop. 30)
+	// Create Default Society (no humans)
 	var activeSoc = new BaseSoc({
 		ns0: POP_CNTS[0],
 		ns1: POP_CNTS[1],
 		nc: POP_CNTS[2],
-		na: POP_CNTS[3]
+		na: POP_CNTS[3],
+		nr: POP_CNTS[4]
 	}, 1.5, 100, 20);
 	if (!activeSoc.render_complete){ 
 		activeSoc.render();
 	}
 	
 	
-	var Hidx = [];
+	var Hidx = [];			// to store the human controlled indices
 	
+	// initialize the switches
 	if (HUMAN > 0) {
-	
 		for (var i = 0; i < activeSoc.size; i++) {
 			if (activeSoc.member[i].strategy === "x") {
 				Hidx.push(i);
@@ -947,7 +1055,6 @@ function main() {
 				}
 			}
 		}
-		
 		$("#ok").prop('disabled', false);
 		$("#run_sim").prop('disabled', true);
 		$("#stop_sim").prop('disabled', true);
@@ -956,11 +1063,12 @@ function main() {
 	} else {
 		var mangame_state = "off";
 		$("#ok").prop('disabled', true);
-		// $("#playground .api #control #player.switch input[type=checkbox]").prop('checked', false);
 	}
 	
+	
+	// user action responses
 	$("#stop_sim").click(function () {
-		$("#stop_sim").prop('disabled', true);
+		$("#stop_sim").prop('disabled', true);					// the run, step and restart buttons are enabled at the end of the round
 		RUN = false;
 	});
 	
@@ -976,7 +1084,7 @@ function main() {
 	
 	$("#step_sim").click(async function () {
 		if (!activeSoc.render_complete){ 
-			await activeSoc.render();		// execute this first and immediately
+			await activeSoc.render();
 		}
 		$("#run_sim").prop('disabled', true);
 		$("#step_sim").prop('disabled', true);
@@ -990,8 +1098,9 @@ function main() {
 	
 	$("#restart_sim").click(async function () {
 		RUN = false;
-		$("#stop_sim").prop('disabled', true);
 		_pop_refresh_reqd = false;
+		
+		$("#stop_sim").prop('disabled', true);
 		
 		await activeSoc.wrap_up();
 		
@@ -1007,13 +1116,13 @@ function main() {
 			ns0: POP_CNTS[0],
 			ns1: POP_CNTS[1],
 			nc: POP_CNTS[2],
-			na: POP_CNTS[3]
+			na: POP_CNTS[3],
+			nr: POP_CNTS[4]
 		}, 1.5, 100, 20);
 		if (HUMAN > 0){
 			for (var i = 0; i < activeSoc.size; i++) {
 				if (activeSoc.member[i].strategy === "x") {
 					Hidx.push(i);
-					// alert("pushing");
 					if (Hidx.length === HUMAN) {
 						break;
 					}
@@ -1075,7 +1184,6 @@ function main() {
 				}
 				activeSoc.active_circle[Hidx[click_cntr]].visible = false;
 				
-				
 				$("#contrib #cinput").val(null);
 				
 				click_cntr++;
@@ -1084,7 +1192,6 @@ function main() {
 					click_cntr = 0;
 					await activeSoc.call();
 					await activeSoc.payoff();
-					
 					activeSoc.r_no++;
 					$("#rno").text(activeSoc.r_no);
 					
@@ -1097,6 +1204,7 @@ function main() {
 						$("#penalties .centered").not(":eq("+Hidx[click_cntr]+")").show();
 						
 					} else {
+						activeSoc.update_leaderboard();
 						activeSoc.active_circle[Hidx[click_cntr]].visible = true;
 					}
 				} else {
@@ -1135,6 +1243,7 @@ function main() {
 			if (click_cntr == HUMAN) {
 				click_cntr = 0;
 				await activeSoc.justice();
+				activeSoc.update_leaderboard();
 				mangame_state = "call";
 				activeSoc.active_circle[Hidx[0]].visible = true;
 				$("#penalties .centered").hide();
