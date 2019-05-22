@@ -21,6 +21,11 @@
 		$nrgx = "/^[a-zA-Z0-9-_\x20]{2,32}$/";
 		$grrgx = "/^[a-z0-9]{8}$/";
 		if ((preg_match($grrgx, $proposedGR) === 1) and (preg_match($nrgx, $name) === 1)) {
+            
+            $bot_rgx = "/^bot[0-9]*$/";
+            if (preg_match($bot_rgx, $name) === 1) {
+                $name = "_".$name;
+            }
 			
 			$return = [];
 			
@@ -41,16 +46,21 @@
 				$row = $result->fetch_assoc();
 				$present = boolval($row['present']);
 				if ($present) {
-					$addQuery = "INSERT INTO `$dbname`.`$proposedGR` (`type`, `cash`, `uuid`, `name`, `rnd`) VALUES ('x', '100.00', '$uuid', '$name', 0)";
+					$addQuery = "INSERT INTO `$dbname`.`$proposedGR` (`type`, `cash`, `uuid`, `name`, `rnd`) VALUES ('x', '100.00', '$uuid', '$name', 0);";
+                    $idQuery = "SELECT `idx` FROM `$dbname`.`$proposedGR` WHERE `uuid` = '$uuid';";
 					
-					if ($cxn->query($addQuery)) {						
-					
+					if ($cxn->query($addQuery) && ($idResult = $cxn->query($idQuery))) {	
+                        $roomid = intval(($idResult->fetch_assoc())['idx']);
+                        
 						$incQuery = " UPDATE `$dbname`.`meta`  SET `nclients` = `nclients` + 1  WHERE `grid` = '$proposedGR'";
 					
 						if ($cxn->query($incQuery)) {							
+                            
+                            
 							$return['status'] = "perfect";
 							$return['msg'] = "joined $proposedGR";
 							$return['GR'] = $proposedGR;
+                            $return['roomid'] = $roomid;
 							
 							session_start();
 							$_SESSION['last_file'] = "index_join";
@@ -60,6 +70,8 @@
 							$_SESSION['uuid'] = $uuid;
 							$_SESSION['bypass'] = false;
 							$_SESSION['rno'] = 0;
+                            $_SESSION['roomid'] = $roomid;
+                            
 							exit(json_encode($return));
 						} else {
 							$return['status'] = "error";

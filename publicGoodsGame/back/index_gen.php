@@ -21,6 +21,11 @@
 		$rgx = "/^[a-zA-Z0-9-_\x20]{2,32}$/";
 		if (preg_match($rgx, $hname) === 1) {
 			
+            $bot_rgx = "/^bot[0-9]*$/";
+            if (preg_match($bot_rgx, $hname) === 1) {
+                $hname = "_".$hname;
+            }
+            
 			// just a useful function
 			function random_str($length, $keyspace = '0123456789abcdefghijklmnopqrstuvwxyz') {
 				$pieces = [];
@@ -93,6 +98,7 @@
 						$return['status'] = "perfect";
 						$return['msg'] = "new game room with GR $proposedGR created";
 						$return['GR'] = $proposedGR;
+                        $return['roomid'] = 1;
 						
 						//
 						// now that the new game room is initialized, clean up any unused game rooms, this doesn't relate to the 
@@ -117,7 +123,8 @@
 						$_SESSION['uuid'] = $uuid;
 						$_SESSION['bypass'] = false;
 						$_SESSION['rno'] = 0;
-						
+						$_SESSION['roomid'] = 1;
+                        
 						exit(json_encode($return));
 					} else {
 						$return['status'] = "error";

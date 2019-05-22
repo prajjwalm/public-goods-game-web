@@ -22,13 +22,14 @@ $button-height: 36px;
 $container-height: 48px;
 $main-input-width: 200px;
 
-$penalty-name-width: 80px;
+$penalty-name-width: 64px;
 $penalty-input-height: 32px;
-$penalty-input-width: 64px;
+$penalty-input-width: 216px;
 
 $text-height: 60px;
 
 $padding: 16px;
+$padding-small: 6px;
 
 $large-font-size: 18px;
 $small-font-size: 14px;
@@ -121,7 +122,7 @@ input[type=number] {
 
 #game-interface {
     width: 25vh;
-    min-width: 240px;
+    min-width: 296px;
     height: 100%;
     min-height: 1.5 * $min-interface-height;
     display: flex;
@@ -152,18 +153,28 @@ input[type=number] {
 }
 .dynamic .member_cash {
 	position: absolute;		/* Coordinates to be set by core.js */
-	z-index: 1;
 }
+
+.m_cash {
+    font-size: 14px;
+}
+
+.m_contrib {
+    font-size: 12px;
+    color: $subtitle-font-color;
+}
+
 .player-name {
     position: absolute;
-    z-index: 1;
+    font-size: 12px;
+    color: $subtitle-font-color;
 }
 
 #penalties {
-    width: $penalty-input-width + 2 * $padding + $penalty-name-width;         // add some extra width here for name/ids    
+    width: $penalty-input-width + $penalty-name-width;         // add some extra width here for name/ids    
     height: 5 * $penalty-input-height;
-    padding: $padding;
-    margin: $padding;
+    padding: $padding-small;
+    margin: $padding-small;
     display: flex;
     flex-direction: column;
     overflow-x: hidden;
@@ -237,7 +248,6 @@ button:hover {
 }
 
 .main-input .group {
-    width: 100%;
     height: $text-height;
     overflow: hidden;
     position: relative;
@@ -329,100 +339,24 @@ button:hover {
 
 .pen-input {
     display: flex;
-    width: ($penalty-input-width + 4 * $padding + $penalty-name-width) * 3/4;
+    width: auto;
     align-items: baseline;
     height: auto;
 }
 
 .pen-input .group {
     width: $penalty-input-width;
-    height: $penalty-input-height;
-    overflow: hidden;
     position: relative;
 }
 
-.pen-input label {
-    position: absolute;
-    top: $penalty-input-height/3;
-    color: rgba($normal-font-color, 0.5);
-    font: 400 $penalty-input-height/3 Diavlo-Bold;
-    cursor: text;
-    transition: 0.25s ease;
-}
-
 .pen-input input {
-    display: block;
-    width: 100%;
-    padding-top: $penalty-input-height/3;
     border: none;
-    border-radius: 0;
     color: $normal-font-color;
     font-size: ($penalty-input-height/3 - 2);
     font-family: Diavlo-Bold;
     transition: 0.3s ease;
 }
-@supports not (-ms-ime-align:auto) {								// other browsers
-	.pen-input input:valid:not(:placeholder-shown) ~ label {
-		top: 0;
-		font: 700 $penalty-input-height/5 Diavlo-Bold;
-		color: rgba($normal-font-color, 0.5);
-	}
-	.pen-input input:invalid:not(:placeholder-shown):not(:focus) ~ label {
-		top: 0;
-		font: 700 $penalty-input-height/5 Diavlo-Bold;
-		color: $err-font-color;
-	}	
-}
 
-@supports(-ms-ime-align:auto) {										// ms edge
-	.pen-input input:valid ~ label {
-		top: 0;
-		font: 700 $penalty-input-height/5 Diavlo-Bold;
-		color: rgba($normal-font-color, 0.5);
-	}
-	.pen-input input:invalid:not(:focus) ~ label {
-		top: 0;
-		font: 700 $penalty-input-height/5 Diavlo-Bold;
-		color: $err-font-color;
-	}	
-}
-.pen-input input:focus {
-    outline: none;
-}
-.pen-input input:focus ~ label {
-    top: 0;
-    font: 700 $penalty-input-height/5 Diavlo-Bold;
-    color: $active-font-color !important;
-}
-.pen-input input:focus ~ .bar:before {
-    transform: translateX(0);
-}
-.pen-input input:-webkit-autofill {
-    -webkit-box-shadow: 0 0 0px 1000px #f7f7f7 inset;
-    -webkit-text-fill-color: white !important;
-}
-  
-.pen-input .bar {
-    background: rgba($normal-font-color, 0.5);
-    content: "";
-    width: 100%;
-    height: $penalty-input-height/20;
-    transition: 0.3s ease;
-    position: relative;
-}
-
-.pen-input .bar:before {
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 150%;
-    background: $active-font-color;
-    transform: translateX(-100%);
-}
-
-.pen-input ::selection {
-    background: rgba($active-font-color, 0.3);
-}
 
 #meta > *:not(:last-child) {
     // font-family: Diavlo-Book;
@@ -512,20 +446,6 @@ button:hover {
     box-sizing: border-box;         /* Opera/IE 8+ */
 }
 
-// @media (min-width: 1280px){
-//     #penalties {
-//         width: $penalty-input-width + 2 * $padding;
-//     }
-
-//     .target {
-//         display: none !important;
-//     }
-
-//     .pen-input {
-//         position: absolute !important;
-//     }
-// }
-
 @media (max-width: 1280px) {
     #gamezone {
         flex-direction: column;
@@ -551,22 +471,6 @@ button:hover {
     .dynamic {
         font-size: $small-font-size * 3/4;
     }
-
-    // #penalties {
-    //     width: $penalty-input-width + 4 * $padding + $penalty-name-width;         // add some extra width here for name/ids
-    // }
-
-    // #pen-desc {
-    //     display: none;
-    // }
-
-    // .pen-input {
-    //     width: $penalty-input-width * 5/6;
-    // }
-    
-    .pen-input .group {
-        width: $penalty-input-width * 5/6;
-    }    
 }
 
 @media (max-width: 1080px) {    
@@ -622,13 +526,6 @@ button:hover {
         width: $penalty-name-width * 3/4;
     }
 
-    // .pen-input {    
-    // }
-
-    .pen-input .group {
-        width: $penalty-input-width * 3/4;
-    }    
-    
 }
 
 @media (max-width: 750px) {
@@ -655,6 +552,14 @@ button:hover {
     #etc {
         min-width: 0px;
         height: auto;
+    }
+
+    .m_cash {
+        font-size: 12px;
+    }
+
+    .m_contrib, .player-name {
+        font-size: 10px;
     }
 }
 

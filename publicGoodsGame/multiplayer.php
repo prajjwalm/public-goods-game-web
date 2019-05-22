@@ -5,15 +5,11 @@
 		header("Location: index.php");
 	}
 	
-	
 	$_SESSION['last_file'] = "multiplayer";
 	if (isset($_SESSION['times'])){
-		// echo "<script>alert('asdfas');</script>";
-		
 		unset($_SESSION['times']);
 	}
 	
-	// https://stackoverflow.com/questions/20582962/whats-the-difference-between-isset-and-empty-in-php
 ?>
 <!DOCTYPE html>
 
@@ -42,10 +38,12 @@
 		<link type="text/css" rel="stylesheet" href="css/style.css" /-->
 		<link type="text/css" rel="stylesheet" href="css/build/game.css" />
 		<link type="text/css" rel="stylesheet" href="css/build/tooltip.css" />
+		<link type="text/css" rel="stylesheet" href="css/build/slider.css" />
 		
 		<!-- my code -->
 		<script src = "js/base.js"></script>
 		<script src = "js/slider_init.js"></script>
+		<script src = "js/slider.js"></script>
 		<script src = "js/mp_renderer.js"></script>
 		<script src = "js/mp_game.js"></script>
 		<script src = "js/mp_players.js"></script>
@@ -82,9 +80,24 @@
 		<div id = "gamezone">
 			<div id = "header" style = "z-index: 1;">
 				Room  <span id = "grno"><?php echo $_SESSION['grid'] ?></span>: Round No.<span id = "rno"><?php echo strval(intdiv($_SESSION['rno'] ,2)) ?></span>
+                <span id="roomid" style = "display:none;"><?php echo $_SESSION['roomid']?></span>
+                <div class="tooltip" id ="header-info"><div class="info">
+                    Ask your friends to enter the 8-char code following 'Room' and then click 'Join' to enter this room, once they do, they will show in the 
+                    Players list in the 
+					<?php if ($_SESSION['host'] === true): ?>
+                        ADMIN space.
+					<?php else: ?>
+                        Meta Data.
+					<?php endif ?>
+                </div></div>
 			</div>						
 			<div id = "playground">
 				<!-- canvas -->
+                <div class="tooltip" id ="canvas-info" style="display:none;"><div class="info">
+                    The large black cash values over a member's head represent his current cash, the smaller shaded values beside them 
+                    his/her last contribution (this will be absent if no last contribution is available, such as before the first round).
+                    The shaded text below these values is the name that they entered on joining.
+                </div></div>
 				<div id = "premsg">
 					<?php if ($_SESSION['host'] === true): ?>
 					Once all the players have joined, adjust the Bot populations as reqd
@@ -94,7 +107,6 @@
 					<?php endif ?>
 				</div>
 				<div id = "balance"></div>
-				<div class = "dynamic"></div>
 				<div id = "names" class = "dynamic"></div>
 			</div>
 			<div id = "game-interface" style = "visibility:hidden;">
@@ -102,23 +114,21 @@
 				<div style = "display:none;" id = "rp">
 					<div id = "rp-info" style = "display: flex; justify-content: space-evenly;">Reward/Penalize: 
                         <div class="tooltip"><div class="info">
-                            The amount beside each players name is the cash that they contributed in the last round. 
-                            To PUNISH, enter a POSITIVE value, the target's cash will be deducted by that amount and
-                            yours by 20% of that. To REWARD enter a NEGETIVE value, the target's cash will increase 
-                            by that amount and your's will decrease by 120%.
-                            Note: you can enter amounts for zero/multiple players.
+                        Adjust the sliders to reward/penalize a person. Positive values (moving the slider right) stand for rewards, 
+                        and the target's cash will increase by that amount, your own decresing by 120% of that. Negetive values (moving
+                        it left) penalize the target and will cause the target's cash to decrease by that amount and your's by 20% of that.
+                        Shifting your own slider will have no effect. You can move as many sliders as you want.
                         </div></div>
-                    </div>		<!-- span id = "pen-desc">to reward/penalize a player, click on the contribution values (in grey and above the cash) and enter the value (positive for rewards, negetive for penalites) </span-->
+                    </div>
 					<div id = "penalties"></div> <!-- Container for all the penalty inputs, keep empty -->
 				</div>
-				<div class="main-input" id = "contrib" autocomplete = "off" style = "display:none;">
-					<div class="group">
-						<input type="number" id="cinput" required="required" placeholder="&nbsp;" step = "0.001" min = "0"/>
-						<!-- set max using current cash using js on each round -->
-						<label for="cinput">Contribution</label>
-						<div class="bar"></div>
-					</div>
-				</div>
+                <div id = "contrib">
+                Contribution
+                    <div class="range-slider">
+                      <input class="range-slider__range" type="range" value="0" min="0" max="100" step="1">
+                      <span class="range-slider__value" id = "cinput">0</span>
+                    </div>
+                </div>
 				<button id = "ok">OK</button>
 			</div>
 		</div>
@@ -140,8 +150,8 @@
                         <div class="tooltip"><div class="info">
                             Adjust the sliders to fix the bot populations, including bots
                             is entirely optional (clicking start with all sliders to zero
-                            begins the game without any bots). If you have no idea as to 
-                            what to set the sliders at, best leave them in the initial state
+                            begins the game without any bots). The available categories are,
+                            respectively, moderately poor contributers, high contributers.
                         </div></div>
                         </div>
 						<div id = "hatspace"></div>
@@ -180,7 +190,6 @@
 					</div>
 					<div id = "meta-controls" style = "display:flex; justify-content:space-evenly;">
 						<button id = "start">Start</button>
-						<!--button id = "abort">Abort</button-->
 						<button id = "end" style = "display:none;">End</button>
 					</div>
 				</div>
@@ -229,11 +238,10 @@
 		</div>
 	</div>	
 
-	<div id = "stdout" style = "Display:None;"></div>
-	<div id = "msg-container">
+	<!-- div id = "msg-container">
 		<div id = "warning" style = "Display:None;"><i class= "fas fa-exclamation-triangle"></i><span></span></div>
 		<div id = "info" style = "Display:None;"><span></span></div>
-	</div>
+	</div -->
 
 	</body>
 </html>

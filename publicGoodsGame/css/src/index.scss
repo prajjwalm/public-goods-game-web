@@ -16,11 +16,17 @@ $container-height: 48px;		// relates to the containers of switch and text inputs
 
 $switch-width: 60px;
 $switch-height: 32px;
+$switch-width-small: 48px;
+$switch-height-small: 28px;
 $switch-word-width: 100px;
+$switch-word-width-small: 72px;
 $switch-word-font-sz: 22px;
+$switch-word-font-sz-small: 18px;
+$switch-total-width: ($switch-width + $switch-word-width)*1.33;
+$switch-total-width-small: ($switch-width + $switch-word-width-small)*1.28;
 
-$text-grid-width: 36%;
-$text-name-width: 56%;
+$text-grid-width: 48%;
+$text-name-width: 48%;
 $text-height: 54px;
 
 $button-width: 120px;
@@ -92,12 +98,18 @@ body {
 	background: #fff;
 }
 
+.input-row.opaque.mode {
+	height: auto;
+	min-height: 48px;
+	padding-left: 32px;
+	padding-right: 32px;
+}
 
 /* Rounded sliders */
 #gametype {
 	display: block;
 	padding: ($container-height - $switch-height)/2;
-	width: ($switch-width + $switch-word-width)*1.5;
+	width: $switch-total-width;
 	height: $switch-height;								// actually container-height, but padding is added to base height
 }
 
@@ -171,8 +183,16 @@ body {
 .switch .slider.round:before {
 	border-radius: 50%;
 }
-/* Buttons */
 
+.tooltip-space {
+	width: calc(100% - #{$switch-total-width + 20px});
+	height: 48px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/* Buttons */
 button {
 	font-family: Diavlo-Bold;
 	font-size: 14px;
@@ -331,7 +351,58 @@ button:hover {
 	}
 }
 
-@media (max-width: 480px) {
+@media (max-width: 360px) {
+	/* Rounded sliders */
+	#gametype {
+		padding: ($container-height - $switch-height-small)/2;
+		width: $switch-total-width-small;
+		height: $switch-height-small;			// actually container-height, but padding is added to base height
+	}
+
+	.switch {
+		width: $switch-width-small;
+		height: $switch-height-small;
+	}
+
+	.switch .word {
+		left: 1.4*$switch-width-small;
+		top: $switch-height-small/8;
+		font-size: $switch-word-font-sz-small;
+		width: $switch-word-width-small;
+	}
+
+	.switch .word.small {
+		left: 1.2*$switch-width-small;
+		font-size: $switch-word-font-sz-small/2;
+	}
+
+	.slider:before {
+		height: $switch-height-small*0.75;
+		width: $switch-height-small*0.75;
+		left: $switch-height-small/8;
+		bottom: $switch-height-small/8;
+	}
+
+	.switch input:checked + .slider:before {
+		-webkit-transform: translateX($switch-width-small - $switch-height-small);
+		-ms-transform: translateX($switch-width-small - $switch-height-small);
+		transform: translateX($switch-width-small - $switch-height-small);
+	}
+
+	.switch .slider.round {
+		border-radius: $switch-height-small;
+	}
+
+	.tooltip-space {
+		width: calc(100% - #{$switch-total-width-small + 24px});
+	}
+	
+	.input-row.opaque.mode {
+		height: auto;
+		min-height: 48px;
+		padding-left: 12px;
+		padding-right: 12px;
+	}
 }
 
 

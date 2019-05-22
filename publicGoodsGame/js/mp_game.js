@@ -141,11 +141,16 @@ $(function () {
 		
 		let rp = {};
 		$("#penalties .pen-input").each(function () {
-			rp[($(this).attr('id')).slice(3)] = -(parseFloat($(this).find("input[type=number]").val()) || 0);
+			// rp[($(this).attr('id')).slice(3)] = -(parseFloat($(this).find("input[type=number]").val()) || 0);
+			rp[($(this).attr('id')).slice(3)] = (parseFloat($(this).find(".range-slider__value").text()) || 0);
 		});
+        console.log(rp);
 	
+        // let contrib = parseFloat($("#cinput").val()) || 0;
+        let contrib = parseFloat($("#cinput").text()) || 0;
+
 		let data = {
-			contrib: parseFloat($("#cinput").val()) || 0,
+			contrib: contrib,
 			rp: JSON.stringify(rp),
 		};
 		
@@ -187,6 +192,7 @@ $(function () {
 							console.log(data);
 							$("#rno").text('' + (parseInt($("#rno").text()) + 1));
 						}
+                        
 						
 					} else {
 						$("#ok").prop('disabled', true);	

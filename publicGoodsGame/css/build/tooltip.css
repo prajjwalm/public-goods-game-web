@@ -37,7 +37,7 @@
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   text-align: justify;
   transform: translate(-84px, calc(-100% - 10px));
-  width: 180px;
+  width: 212px;
   background: #eeeeee;
   border-radius: 6px;
   display: none;
@@ -45,25 +45,39 @@
   z-index: 2;
 }
 
+#start-info .info {
+  width: 320px;
+}
+
 #admin-header .info {
-  width: 180px !important;
+  width: 212px !important;
   transform: translate(-120px, calc(-100% - 10px));
 }
 
+#canvas-info {
+  position: absolute;
+  z-index: 1;
+}
+
 #pop-manager-header .info {
-  width: 180px !important;
+  width: 212px !important;
   transform: translate(calc(-100% + 4px), calc(-100% - 10px));
 }
 
 #player-manager-header .info {
-  width: 200px !important;
+  width: 232px !important;
   transform: translate(-100%, calc(-100% - 10px));
 }
 
 #rp-info .info {
-  width: 280.8px !important;
+  width: 330.72px !important;
   font-size: 10px;
   transform: translate(-75%, calc(-100% - 10px));
+}
+
+#header-info .info {
+  transform: translate(10%, 10%);
+  z-index: 2;
 }
 
 .tooltip:hover .info {
@@ -72,8 +86,12 @@
 }
 
 @media (max-width: 480px) {
-  .info {
-    width: 108px !important;
+  #start-info .info {
+    position: absolute;
+    left: 50%;
+    -webkit-transform: translate(-50%, calc(-100% - 10px));
+    transform: translate(-50%, calc(-100% - 10px));
+    width: 272px;
   }
 }
 

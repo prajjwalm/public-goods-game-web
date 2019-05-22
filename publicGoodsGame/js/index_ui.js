@@ -10,9 +10,9 @@ $(function () {
 		var id = $(".switch input[type=checkbox]").attr('id');
 		if ($(".switch input[type=checkbox]").prop('checked')) {
 			txt = "Multiplayer";
-			word = "Choose this mode to play the public goods game with friends. The name is just for others to recognize you during the \
-			match and doesn't require any login. (Click generate to create a new room to play in, or join to join an existing room where \
-			the game hasn't yet started.)";
+			word = "To play the public goods game, you must enter into a gameroom. If one of your friends has already generated a gameroom \
+            where the game hasn't started yet, ask him for the (8char) room id and enter it into the 'Game Room Id' input. Otherwise create a fresh \
+            gameroom by clicking generate. Note: to enable either buttons a 2-10 lettered name must be entered, which will be your id in the game";
 			$("#join").show();
 			$("#gen").show();
 			$("#gameroom").show();
@@ -20,8 +20,7 @@ $(function () {
 			$("#start").hide();
 		} else {
 			txt = "Exploration";
-			word = "Choose this mode if you are curious about what we can learn from the public goods game or simply wish to play \
-			the game in a single/zero player mode. (Under construction)";
+			word = "UNDER CONSTRUCTION. Select the multiplayer mode.";
 			$("#join").hide();
 			$("#gen").hide();
 			$("#gameroom").hide();
@@ -30,7 +29,7 @@ $(function () {
 			
 		}
 		$(".switch input[type=checkbox]").siblings(".word").text(txt);
-		$("#input .description."+id+" span").text(word);
+		$(".tooltip .info").text(word);
 	}
 	
 	

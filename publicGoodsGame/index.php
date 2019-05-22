@@ -42,9 +42,8 @@
 
 	<body>
 		<div id = "input">
-			<!-- div class = "input-row header">User Settings:</div -->
 			<div class = "input-row header mode"> Play Mode:</div>
-			<div class = "input-row opaque mode" style = "height: auto; min-height: 48px; padding-left: 32px; padding-right: 32px;">
+			<div class = "input-row opaque mode">
 				<div id = "gametype">
 					<label class="switch">
 						<span class="word">Exploration</span>
@@ -52,9 +51,8 @@
 						<span class="slider round"></span>
 					</label>
 				</div>
-                <div class = "tooltip-space" style = "width: 50%; height: 48px; display: flex; align-items: center;"> <!-- index.scss 97 -->
-                    <div class="tooltip"><div class="info">
-                        Choose one of the game modes to begin.
+                <div class = "tooltip-space"> <!-- index.scss 97 -->
+                    <div class="tooltip" id ="start-info"><div class="info">
                     </div></div>
                 </div>
 				<div id = "gameroom" class="main-input" autocomplete = "off" style = "display:none;">
@@ -66,17 +64,18 @@
 				</div>			
 				<div id = "name" class="main-input" autocomplete = "off" style = "display:none;">
 					<div class="group">
-						<input type="text" id="nameinput" placeholder="&nbsp;" required maxlength="32" pattern="^[a-zA-Z0-9-_\x20]{4,24}$"/>
+						<input type="text" id="nameinput" placeholder="&nbsp;" required maxlength="32" pattern="^[a-zA-Z0-9-_\x20]{2,10}$"/>
 						<label for="nameinput">Name</label>
 						<div class="bar"></div>
 					</div>
 				</div>			
 			</div>
 			<div class = "input-row description mode">
-				<span></span>
+				<span>Hovering on the information circles: <div class = "tooltip" style = "display:inline-block;animation:none; width: 12px; height: 12px; transform: translateY(3px);"></div> shows instructions on how to play the game. Now hover over the circle besides the 
+                play mode selector to know how to enter a game. </span>
 			</div>
 			<div class = "input-row button"  style = "height: 32px;">
-				<button id = "start">Start</button>
+				<button id = "start" disabled>Start</button>
 				<button id = "gen" style = "display:none;" disabled> Generate </button>
 				<button id = "join" style = "display:none;" disabled>Join</button>
 			</div>

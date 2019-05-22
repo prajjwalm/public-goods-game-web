@@ -12,6 +12,7 @@ var SocReqd = false;
 var mainDone = false;
 var pop_mem = [];
 var data_mem = [];
+var RP_FACTOR = 5;
 
 var ALL_POSITIONS = {};
 var ALL_IDXS = [];
@@ -94,7 +95,7 @@ function SocRenderer(pop, data) {
 		if (balance) {
 			// update balance
 			if (!slide) {
-				$("#gamezone #balance").text("$" + (this.balance).toFixed(2));
+				$("#gamezone #balance").text("$" + Math.round(this.balance));
 				$("#gamezone #balance").css({
 					"top": (this.center.y - $("#gamezone #balance").height()/2) + "px",
 					"left": (this.center.x - $("#gamezone #balance").width()/2) + "px"
@@ -105,14 +106,14 @@ function SocRenderer(pop, data) {
 				var fval = slideTo;
 				var time = this.payoff_fsleep;
 				for (var ii = 0, val = ival; ii < gran; ii++, val += (fval - ival)/gran) {
-					$("#gamezone #balance").text("$" + val.toFixed(2));
+					$("#gamezone #balance").text("$" + Math.round(val));
 					$("#gamezone #balance").css({							
 						"top": (this.center.y - $("#gamezone #balance").height()/2) + "px",
 						"left": (this.center.x - $("#gamezone #balance").width()/2) + "px"
 					});
 					await sleep(time/gran);
 				}
-				$("#gamezone #balance").text("$" + slideTo.toFixed(2));
+				$("#gamezone #balance").text("$" + Math.round(slideTo));
 				$("#gamezone #balance").css({							
 					"top": (this.center.y - $("#gamezone #balance").height()/2) + "px",
 					"left": (this.center.x - $("#gamezone #balance").width()/2) + "px"
@@ -126,7 +127,7 @@ function SocRenderer(pop, data) {
 			if (i === this.size) {
 				for (var j = 0; j < this.size; j++) {
 					// cash
-					$("div.dynamic div.member_cash:eq("+j+")").text("$" + this.member_cash[j].toFixed(2));
+					$("div.dynamic div.member_cash:eq("+j+") .m_cash").text("$" + Math.round(this.member_cash[j]));
 					let memcash_text_width = $("div.dynamic div.member_cash:eq("+j+")").width();
 					let memcash_text_height = $("div.dynamic div.member_cash:eq("+j+")").height();
 					$("div.dynamic div.member_cash:eq("+j+")").css({
@@ -134,11 +135,43 @@ function SocRenderer(pop, data) {
 						"left": (this.center.x + uiRadius * Math.cos(Math.PI * j * 2/this.size) - memcash_text_width/2 + member_cash_offset.x) + "px"
 					});
 					
+                    let roomid = parseInt($("#roomid").text());
+                    let roompos = HUMAN_POSITIONS[roomid];
+                    
+                    if (j == roompos) {
+                        // both sliders, contrib and rp
+                        $(".range-slider__range").attr('max', Math.round(this.member_cash[roompos]));
+                        $(".range-slider__range").prop('value', 0);
+                        $(".range-slider__value").text('0');
+                        let cash_deductable = RP_FACTOR*this.member_cash[roompos]
+                        
+                        let member_cash_alias = this.member_cash;
+                        $("#penalties .range-slider__range").each (function (idx) {
+                            $(this).attr('min', -Math.round(member_cash_alias[idx]<cash_deductable ? member_cash_alias[idx]:cash_deductable));
+                        });
+                    }
 					
 				}
 			} else if (i < this.size && i >= 0){
 				// cash
-				$("div.dynamic div.member_cash:eq("+i+")").text("$" + this.member_cash[i].toFixed(2));
+                
+                let roomid = parseInt($("#roomid").text());
+                let roompos = HUMAN_POSITIONS[roomid];
+                
+                if (i == roompos) {
+                        // both sliders, contrib and rp
+                        $(".range-slider__range").attr('max', Math.round(this.member_cash[roompos]));
+                        $(".range-slider__range").prop('value', 0);
+                        $(".range-slider__value").text('0');
+                        let cash_deductable = RP_FACTOR*this.member_cash[roompos]
+                        
+                        let member_cash_alias = this.member_cash;
+                        $("#penalties .range-slider__range").each (function (idx) {
+                            $(this).attr('min', -Math.round(member_cash_alias[idx]<cash_deductable ? member_cash_alias[idx]:cash_deductable));
+                        });
+                }
+                
+				$("div.dynamic div.member_cash:eq("+i+") .m_cash").text("$" + Math.round(this.member_cash[i]));
 				let memcash_text_width = $("div.dynamic div.member_cash:eq("+i+")").width();
 				let memcash_text_height = $("div.dynamic div.member_cash:eq("+i+")").height();
 				$("div.dynamic div.member_cash:eq("+i+")").css({
@@ -178,11 +211,10 @@ function SocRenderer(pop, data) {
 		
 		$(".dynamic .member_cash").each(function (index) {
 			let i = $(this).css("order");									// string, but that is ok as js objects have string indices anyway
-			initial_cash[i] = parseFloat(($(this).text()).slice(1));
-			
-			err = err || approxeq(final_cash[i] - initial_cash[i], balance/mem_cnt - contrib[i]);
-			
-			
+			initial_cash[i] = parseFloat(($(this).text()).slice(1));        // approximate integer value
+            dividend = balance/mem_cnt;
+			err = err || !approxeq(final_cash[i] - initial_cash[i], dividend - parseFloat(contrib[i]), 1);
+            
 			// in case the database indices aren't consequetive
 			icash_arr.push(parseFloat(initial_cash[i]));
 			fcash_arr.push(parseFloat(final_cash[i]));
@@ -205,11 +237,10 @@ function SocRenderer(pop, data) {
 			}
 			chk_balance *= 1.5; 		// mf: make global
 			
-			if (!approxeq(balance, chk_balance)) {
+			if (!approxeq(balance, chk_balance, 1)) {
 				console.log("fatal error: balance not according to contribs");
+                console.log("balance: "+balance+", check_balance: "+chk_balance);
 				console.log(chk_balance);
-				alert("there was a sync error with the database, please restart the game, sorry");
-				return;
 			}
 			
 			final_cash[i] = initial_cash[i] + balance/mem_cnt - contrib[i];
@@ -224,6 +255,7 @@ function SocRenderer(pop, data) {
 			
 			this.balance += contrib_arr[i];
 			this.member_cash[i] = icash_arr[i] - contrib_arr[i];
+            $(".m_contrib:eq("+i+")").text(':' + Math.round(contrib_arr[i]));
 			await this.updateUI (true, true, i);
 			
 			this.active_line[i].visible = false;
@@ -242,11 +274,11 @@ function SocRenderer(pop, data) {
 		
 		for (var i = 0; i < this.size; i++) this.active_line[i].visible = false;
 		
-		for (let i in contrib) {
-			if (contrib.hasOwnProperty(i)) {
-				$("#pen"+i+" label" ).text("$" + parseFloat(contrib[i]).toFixed(2));
-			}
-		}
+		// for (let i in contrib) {
+			// if (contrib.hasOwnProperty(i)) {
+				// $("#pen"+i+" label" ).text("$" + parseFloat(contrib[i]).toFixed(2));
+			// }
+		// }
         console.log(this.data);
 	}
 
@@ -372,6 +404,7 @@ function SocRenderer(pop, data) {
 			for (var i = 0; i < this.size; i++) {
 				game_canvas.stage.addChild(this.peep[i]);
 			}
+            
 		} else if (this.render_state == 1) {
 			for (var i = 0; i < this.size; i++) {
 				this.peep[i].position.set(game_canvas_DIM/2 + radius * Math.cos(Math.PI * i * 2/this.size), game_canvas_DIM/2 - radius * Math.sin(Math.PI * i * 2/this.size));
@@ -452,7 +485,7 @@ function SocRenderer(pop, data) {
 
 				// mention the cash 
 				if (this.render_state == 0 ) {
-                    $(".dynamic").append("<div class = 'member_cash' style = 'order: " + idx + " ;'></div>");
+                    $(".dynamic").append("<div class = 'member_cash' style = 'order: " + idx + " ;'><span class='m_cash'></span><span class='m_contrib'></span></div>");
                     this.member_cash[ii] = parseFloat(this.data[idx]['cash']);
                     
                     // idx maintainance
@@ -461,8 +494,8 @@ function SocRenderer(pop, data) {
                     
                     // Do NOT overwrite cash if already mentioned
                 }                 
-                console.log(this.data[idx]['cash']);
-                    $(".dynamic .member_cash:eq("+ii+")").text("$" + this.data[idx]['cash']);
+                // console.log(this.data[idx]['cash']);
+                    $(".dynamic .member_cash:eq("+ii+") .m_cash").text("$" + this.data[idx]['cash']);
                 
 				let memcash_text_width = $(".dynamic .member_cash:eq("+ii+")").width();
 				let memcash_text_height = $(".dynamic .member_cash:eq("+ii+")").height();
@@ -470,9 +503,24 @@ function SocRenderer(pop, data) {
 				let cash_y = (this.center.y - uiRadius * Math.sin(Math.PI * ii * 2/this.size) - memcash_text_height/2 + member_cash_offset.y);
 				let cash_x = (this.center.x + uiRadius * Math.cos(Math.PI * ii * 2/this.size) - memcash_text_width/2 + member_cash_offset.x);
 				
+                
+                $("#canvas-info").css({
+                    "top": (this.center.y - 48) + "px",
+                    "left": (this.center.x + 72) + "px"
+                })
+                
+                
 				if (this.render_state == 0 ) {
 					$("#names").append('<div class="player-name" id="name'+ii+'"> '+ this.data[idx]['name'] +' </div>');
-					$("#penalties").append('<div class="pen-input" id="pen'+idx+'"> <span class = "target"> '+this.data[idx]['name']+': </span> <div class="group"><input type="number" id="p'+idx+'" step="any"  placeholder="&nbsp;" /><label for="p'+idx+'"></label><div class="bar"></div></div></div>');
+                    
+                    $("#canvas-info").show();
+            
+					// $("#penalties").append('<div class="pen-input" id="pen'+idx+'"> <span class = "target"> '
+                    // +this.data[idx]['name']+': </span> <div class="group"><input type="number" id="p'+idx
+                    // +'" step="any"  placeholder="&nbsp;" /><label for="p'+idx+'"></label><div class="bar"></div></div></div>');
+                        
+                    $("#penalties").append('<div class="pen-input" id="pen'+idx+'"><span class = "target">'+
+                    this.data[idx]['name']+'</span><div class="range-slider group"><input class="range-slider__range" type="range" value="0" min="-20" max="100" step="1"><span class="range-slider__value"  id="p'+idx+'">0</span></div></div>')
 				}
 				
 				$(".dynamic .member_cash:eq("+ii+")").css({
@@ -483,6 +531,8 @@ function SocRenderer(pop, data) {
 				ii++;
 			}
 		}
+        
+        rangeSlider();
 		
 		// position the names
 		for (var i = 0; i < this.size; i++) {

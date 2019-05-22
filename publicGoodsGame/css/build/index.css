@@ -62,11 +62,18 @@ body {
   background: #fff;
 }
 
+.input-row.opaque.mode {
+  height: auto;
+  min-height: 48px;
+  padding-left: 32px;
+  padding-right: 32px;
+}
+
 /* Rounded sliders */
 #gametype {
   display: block;
   padding: 8px;
-  width: 240px;
+  width: 212.8px;
   height: 32px;
 }
 
@@ -141,6 +148,14 @@ body {
   border-radius: 50%;
 }
 
+.tooltip-space {
+  width: calc(100% - 232.8px);
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Buttons */
 button {
   font-family: Diavlo-Bold;
@@ -176,12 +191,12 @@ button:hover {
 /* Stylized Text Input */
 .main-input {
   display: block;
-  width: 36%;
+  width: 48%;
   height: 48px;
 }
 
 #name {
-  width: 56%;
+  width: 48%;
 }
 
 .main-input .group {
@@ -298,6 +313,59 @@ button:hover {
 
   h1 {
     font-size: 32px;
+  }
+}
+@media (max-width: 360px) {
+  /* Rounded sliders */
+  #gametype {
+    padding: 10px;
+    width: 168.96px;
+    height: 28px;
+  }
+
+  .switch {
+    width: 48px;
+    height: 28px;
+  }
+
+  .switch .word {
+    left: 67.2px;
+    top: 3.5px;
+    font-size: 18px;
+    width: 72px;
+  }
+
+  .switch .word.small {
+    left: 57.6px;
+    font-size: 9px;
+  }
+
+  .slider:before {
+    height: 21px;
+    width: 21px;
+    left: 3.5px;
+    bottom: 3.5px;
+  }
+
+  .switch input:checked + .slider:before {
+    -webkit-transform: translateX(20px);
+    -ms-transform: translateX(20px);
+    transform: translateX(20px);
+  }
+
+  .switch .slider.round {
+    border-radius: 28px;
+  }
+
+  .tooltip-space {
+    width: calc(100% - 192.96px);
+  }
+
+  .input-row.opaque.mode {
+    height: auto;
+    min-height: 48px;
+    padding-left: 12px;
+    padding-right: 12px;
   }
 }
 

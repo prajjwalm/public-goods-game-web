@@ -62,7 +62,7 @@
         "irpop"     => 0.5,             // initial reward-punishment opinion
         "ihfl"      => 0.8,             // initial honesty-factor low
         "ihfh"      => 1.0,             // initial honesty-factor high
-        "ivcopl"    => 1.0,             // initial volatility of contribution-regd opinion (multiplier) low
+        "ivcopl"    => 2.0,             // initial volatility of contribution-regd opinion (multiplier) low
         "ivcoph"    => 3.0,             // initial volatility of contribution-regd opinion (multiplier) high
         "ivrpopl"   => 1.0,             // initial volatility of reward-punishment-regd opinion (multiplier) low
         "ivrpoph"   => 3.0,             // initial volatility of reward-punishment-regd opinion (multiplier) high
@@ -73,12 +73,11 @@
         "r0"        => 0.2,             // reward magnitude
         "max_rloss" => 0.2,             // maximum reward loss
         "max_ploss" => 0.4,             // maximum punishment loss
-        "copcl"     => 0.2,             // contribution-regd opinion constant low (punishment trigger)
+        "copcl"     => 0.3,             // contribution-regd opinion constant low (punishment trigger)
         "rpopcl"    => 0.4,             // reward-punishment-regd opinion constant low
         "copch"     => 0.8,             // contribution-regd opinion constant high (reward trigger)
         "rpopch"    => 0.6,             // reward-punishment-regd opinion constant high
         "m"         => 0.5,             // weight to reward-punishment wrt contribution
-        "coolrnds"  => 3,               // no. of cooldown rounds (between two successive rewards/punishments)
     ];
 
     $b = [
@@ -185,7 +184,7 @@
         }
         
         public function call ($soc) {
-            return $this->hf * $soc->Cash[$this->idx];
+            return floor($this->hf * $soc->Cash[$this->idx]);
         }
         
         public function payoff_listener ($soc, $payoff){
@@ -221,44 +220,31 @@
                 $this->msg .= "$idx: ";
                 if ($idx != $this->idx){
                     $this->msg .= "0";
-                    if ($this->cooldown[$idx] == 0){
+                    if ($this->cop[$idx] + $this->rpop[$idx] * $args['g']['m'] < $args['g']['copcl'] + $args['g']['rpopcl'] * $args['g']['m']) {
                         $this->msg .= "0";
-                        if ($this->cop[$idx] + $this->rpop[$idx] * $args['g']['m'] < $args['g']['copcl'] + $args['g']['rpopcl'] * $args['g']['m']) {
+                        if ($ploss < $args['g']['max_ploss'] * $soc->Cash[$this->idx]) {
                             $this->msg .= "0";
-                            if ($ploss < $args['g']['max_ploss'] * $soc->Cash[$this->idx]) {
-                                $this->msg .= "0";
-                                $rp[$idx] = - $args['g']['p0'] * $botcash * (1 + $this->vol);                       // neg val => punish
-                                $ploss += $args['g']['p0'] * $botcash * $rp_factor * (1 + $this->vol);
-                                $this->cooldown[$idx] = 1;
-                            } else {
-                                $this->msg .= "1($ploss vs".$args['g']['max_ploss'] * $soc->Cash[$this->idx].")";
-                                $rp[$idx] = 0;
-                            }
-                        }
-                        elseif ($this->cop[$idx] + $this->rpop[$idx] * $args['g']['m'] > $args['g']['copch'] + $args['g']['rpopch'] * $args['g']['m']) {
-                            $this->msg .= "1";
-                            if ($rloss < $args['g']['max_rloss'] * $soc->Cash[$this->idx]) {
-                                $this->msg .= "0";
-                                $rp[$idx] = $args['g']['r0'] * $botcash * (1 + $this->vol);                     // pos val => reward/transfer cash
-                                $rloss += $args['g']['r0'] * $botcash * ($rp_factor + 1) * (1 + $this->vol);    // as one reward takes the space of 1/rpf punishes
-                                $this->cooldown[$idx] = 2;              
-                            }
-                            else {
-                                $rp[$idx] = 0;
-                            }
-                        }                               
-                        else {
-                            $this->msg .= "1{OP:".($this->cop[$idx] + $this->rpop[$idx] * $args['g']['m'])."Lop".($args['g']['copcl'] + $args['g']['rpopcl'] * $args['g']['m'])."Hop".($args['g']['copch'] + $args['g']['rpopch'] * $args['g']['m'])."}";
-                            $this->msg .= "2";
+                            $rp[$idx] = - floor($args['g']['p0'] * $botcash * (1 + $this->vol));                       // neg val => punish
+                            $ploss += floor($args['g']['p0'] * $botcash * $rp_factor * (1 + $this->vol));
+                        } else {
+                            $this->msg .= "1($ploss vs".$args['g']['max_ploss'] * $soc->Cash[$this->idx].")";
                             $rp[$idx] = 0;
                         }
-                    } else {
+                    }
+                    elseif ($this->cop[$idx] + $this->rpop[$idx] * $args['g']['m'] > $args['g']['copch'] + $args['g']['rpopch'] * $args['g']['m']) {
                         $this->msg .= "1";
-                        $rp[$idx] = 0;
-                        $this->cooldown[$idx]++;
-                        if ($this->cooldown[$idx] >= $args['g']['coolrnds']) {
-                            $this->cooldown[$idx] = 0 ; // cooldown rounds -> 2 or 3
+                        if ($rloss < $args['g']['max_rloss'] * $soc->Cash[$this->idx]) {
+                            $this->msg .= "0";
+                            $rp[$idx] = floor($args['g']['r0'] * $botcash * (1 + $this->vol));                     // pos val => reward/transfer cash
+                            $rloss += floor($args['g']['r0'] * $botcash * ($rp_factor + 1) * (1 + $this->vol));    // as one reward takes the space of 1/rpf punishes
                         }
+                        else {
+                            $rp[$idx] = 0;
+                        }
+                    }                               
+                    else {
+                        $this->msg .= "2";
+                        $rp[$idx] = 0;
                     }
                 } else {
                     $this->msg .= "1";
@@ -364,7 +350,7 @@
         }
         
         public function call ($soc) {
-            return $this->hf * $soc->Cash[$this->idx];
+            return floor($this->hf * $soc->Cash[$this->idx]);
         }
     
         public function payoff_listener ($soc, $payoff){
@@ -425,10 +411,10 @@
                         $l = $args['b']['copcl'] + $args['b']['rpopcl']*$args['b']['m1'] + $args['b']['cashopcl']*$args['b']['m2'];
                         $h = $args['b']['copch'] + $args['b']['rpopch']*$args['b']['m1'] + $args['b']['cashopch']*$args['b']['m2'];
                         if ($x < $l) {
-                            $rp[$idx] = ($x - $l) * $args['b']['p0'] * $botcash;
+                            $rp[$idx] = floor(($x - $l) * $args['b']['p0'] * $botcash);
                             $rploss += (-$rp[$idx]) * $rp_factor;
                         } elseif ($x > $h) {
-                            $rp[$idx] = ($x - $h) * $args['b']['r0'] * $botcash;
+                            $rp[$idx] = floor(($x - $h) * $args['b']['r0'] * $botcash);
                             $rploss += ($rp[$idx]) * ($rp_factor + 1);
                         } else {
                             $rp[$idx] = 0;
@@ -465,7 +451,7 @@
             $eta = bound(-1,$netrp / ($soc->Cash[$this->idx] + 1),1) / $args['b']['hf_loss_eq'];
             
             // heavy punishment -> hf rise  (at net punishment of ($args['b']['hf_loss_eq'])*cash, hf rises by $args['b']['hf_loss_eq'])
-            if ($eta < 0) {
+            if ($eta < 0.4) {
                 $this->hf += ($eta * $eta * $eta) * (-$args['b']['hf_loss_eq']);
                 $this->hf = bound(0, $this->hf, 1);
             }

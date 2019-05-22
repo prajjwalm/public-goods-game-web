@@ -1,6 +1,6 @@
 $white: #ccc;
 $off-white: #eee;
-$full-width: 180px;
+$full-width: 212px;
 $small-width: 108px;
 
 
@@ -56,10 +56,20 @@ $small-width: 108px;
   z-index: 2;
 }
 
+// in index.php
+#start-info .info {
+  width: 320px;
+}
+
 // in multiplayer.php admin version
 #admin-header .info {
   width: $full-width !important;
   transform: translate(-120px, calc(-100% - 10px));
+}
+
+#canvas-info {
+  position: absolute;
+  z-index: 1;
 }
 
 #pop-manager-header .info {
@@ -77,22 +87,23 @@ $small-width: 108px;
   transform: translate(-75%, calc(-100% - 10px));
 }
 
+#header-info .info {
+  transform: translate(10%, 10%);
+  z-index: 2;
+}
+
 .tooltip:hover .info {
   display: block;
-  opacity: 0.92;
+  opacity: .92;
 }
 
 @media (max-width: 480px) {
-  .info {
-    width: $small-width !important;
+  #start-info .info {
+    position: absolute;
+    left: 50%;
+    -webkit-transform: translate(-50%, calc(-100% - 10px));
+    transform: translate(-50%, calc(-100% - 10px));
+    width: 272px;
   }
-}
 
-// .tooltip{
-//   animation-name: shake;
-//   animation-delay: 1s;
-//   animation-duration: 0.82s; 
-//   animation-timing-function: cubic-bezier(.36,.07,.19,.97);
-//   animation-fill-mode: both;
-//   animation-iteration-count: infinite;
-// }
+}
