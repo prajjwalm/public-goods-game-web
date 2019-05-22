@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Hello World</title>
+</head>
+  <script src="js/lib/pixi.min.js"></script>
+  <script src = "js/lib/jquery-3.2.1.min.js"></script>
+  
+  <script type="text/javascript">
+	$(Document).ready(function () {
+	
+		//Aliases
+		let Application = PIXI.Application,
+			loader = PIXI.loader,
+			resources = PIXI.loader.resources,
+			Sprite = PIXI.Sprite,
+			Graphics = PIXI.Graphics,
+			TextureCache = PIXI.utils.TextureCache;
+			
+		// More Aliases
+		let Rectangle = PIXI.Rectangle;
+	
+		//Create a Pixi Application
+		let app = new Application();
+
+		app.renderer.view.style.position = "absolute";
+		app.renderer.view.style.display = "block";
+		app.renderer.autoResize = true;
+		app.renderer.resize(window.innerWidth * 0.75, window.innerHeight);
+		// app.renderer.backgroundColor = 0xffffff;
+		
+		// Add the canvas that Pixi automatically created for you to the HTML document
+		$("#asdf").append(app.view);
+		
+		var center = {x:300, y:300};
+		var radius = 250;
+		// create sprites
+		loader
+		  .add("images/splash_peep.png")
+		  .add("images/splash_peep.json")
+		  .load(setup);
+
+		function setup() {
+		  splash_peep_t = resources["images/splash_peep.json"].textures;
+		  
+		  peep = [];
+		  for (var i = 0; i < 24; i++) {
+			peep.push(new Sprite(splash_peep_t["splash_peep0000"]));
+		  }
+		  
+		  
+		  for (var i = 0; i < 24; i++) {
+			peep[i].position.set(center.x + radius * Math.cos(Math.PI * i/12), center.y + radius * Math.sin(Math.PI * i/12));
+			peep[i].scale.set(0.25, 0.25);
+		  }
+		  for (var i = 0; i < 24; i++) {
+  		    app.stage.addChild(peep[i]);
+		  }
+		}
+		
+		let circle = new Graphics();
+		circle.beginFill(0x9966ff);
+		circle.drawCircle(0,0,2);
+		circle.endFill();
+		circle.x = center.x + radius;
+		circle.y = center.y;
+		app.stage.addChild(circle);
+		
+	});
+
+  </script>
+<body style="margin:0px;">
+	<div id = "asdf"></div>
+</body>
+</html>

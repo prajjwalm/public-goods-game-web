@@ -263,15 +263,28 @@ button:hover {
     font-family: Diavlo-Bold;
     transition: 0.3s ease;
 }
-.main-input input:valid:not(:placeholder-shown) ~ label {
-    top: 0;
-    font: 700 $text-height/5 Diavlo-Bold;
-    color: rgba($normal-font-color, 0.5);
+@supports not (-ms-ime-align:auto) {
+	.main-input input:valid:not(:placeholder-shown) ~ label {
+		top: 0;
+		font: 700 $text-height/5 Diavlo-Bold;
+		color: rgba($normal-font-color, 0.5);
+	}
+	.main-input input:invalid:not(:placeholder-shown):not(:focus) ~ label {
+		top: 0;
+		font: 700 $text-height/5 Diavlo-Bold;
+		color: $err-font-color;
+	}	
 }
-.main-input input:invalid:not(:placeholder-shown):not(:focus) ~ label {
-    top: 0;
-    font: 700 $text-height/5 Diavlo-Bold;
-    color: $err-font-color;
+
+@supports (-ms-ime-align:auto) {
+	.main-input input:valid ~ label {
+		display: none;
+	}
+	.main-input input:invalid:not(:focus) ~ label {
+		top: 0;
+		font: 700 $text-height/5 Diavlo-Bold;
+		color: rgba($normal-font-color, 0.5);
+	}	
 }
 .main-input input:focus {
     outline: none;
@@ -348,15 +361,30 @@ button:hover {
     font-family: Diavlo-Bold;
     transition: 0.3s ease;
 }
-.pen-input input:valid:not(:placeholder-shown) ~ label {
-    top: 0;
-    font: 700 $penalty-input-height/5 Diavlo-Bold;
-    color: rgba($normal-font-color, 0.5);
+@supports not (-ms-ime-align:auto) {								// other browsers
+	.pen-input input:valid:not(:placeholder-shown) ~ label {
+		top: 0;
+		font: 700 $penalty-input-height/5 Diavlo-Bold;
+		color: rgba($normal-font-color, 0.5);
+	}
+	.pen-input input:invalid:not(:placeholder-shown):not(:focus) ~ label {
+		top: 0;
+		font: 700 $penalty-input-height/5 Diavlo-Bold;
+		color: $err-font-color;
+	}	
 }
-.pen-input input:invalid:not(:placeholder-shown):not(:focus) ~ label {
-    top: 0;
-    font: 700 $penalty-input-height/5 Diavlo-Bold;
-    color: $err-font-color;
+
+@supports(-ms-ime-align:auto) {										// ms edge
+	.pen-input input:valid ~ label {
+		top: 0;
+		font: 700 $penalty-input-height/5 Diavlo-Bold;
+		color: rgba($normal-font-color, 0.5);
+	}
+	.pen-input input:invalid:not(:focus) ~ label {
+		top: 0;
+		font: 700 $penalty-input-height/5 Diavlo-Bold;
+		color: $err-font-color;
+	}	
 }
 .pen-input input:focus {
     outline: none;
@@ -511,7 +539,7 @@ button:hover {
 
     #game-interface {
         width: 100%;
-        height: auto;
+        height: 280px !important;
         flex-direction: row;
         min-height: $min-interface-height;
     }

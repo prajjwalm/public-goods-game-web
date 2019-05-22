@@ -1,0 +1,98 @@
+$white: #ccc;
+$off-white: #eee;
+$full-width: 180px;
+$small-width: 108px;
+
+
+@keyframes shake {
+  5%, 45% {
+    transform: translate(-0.3px, 0);
+  }
+  
+  10%, 40% {
+    transform: translate(0.6px, 0);
+  }
+
+  15%, 25%, 35% {
+    transform: translate(-1px, 0);
+  }
+
+  20%, 30% {
+    transform: translate(1px, 0);
+  }
+
+  0% , 50% {
+    transform: translate(0,0);
+  }
+}
+
+.tooltip {  
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid $white;
+  background: rgba($white,.5);
+  z-index: 2;
+}
+
+.tooltip:not(:hover) {
+  animation: shake 2s cubic-bezier(.36,.07,.19,.97) 1s infinite normal both;
+  -moz-animation: shake 2s cubic-bezier(.36,.07,.19,.97) 1s infinite normal both;
+  -webkit-animation: shake 2s cubic-bezier(.36,.07,.19,.97) 1s infinite normal both;
+}
+
+.info {
+  padding:10px;
+  position:absolute;
+  font-size: 11px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  text-align: justify;
+  transform: translate(-84px, calc(-100% - 10px));
+  width: $full-width;
+  background:rgba($off-white,1);
+  border-radius:6px;
+  display: none;
+	box-shadow: 0 2px 6px 0 rgba(0,0,0,0.16),0  2px 14px 0 rgba(0,0,0,0.12);
+  z-index: 2;
+}
+
+// in multiplayer.php admin version
+#admin-header .info {
+  width: $full-width !important;
+  transform: translate(-120px, calc(-100% - 10px));
+}
+
+#pop-manager-header .info {
+  width: $full-width !important;
+  transform: translate(calc(-100% + 4px), calc(-100% - 10px));
+}
+#player-manager-header .info {
+  width: $full-width + 20px !important;
+  transform: translate(-100%, calc(-100% - 10px));
+}
+
+#rp-info .info {
+  width: $full-width * 1.56 !important;
+  font-size: 10px;
+  transform: translate(-75%, calc(-100% - 10px));
+}
+
+.tooltip:hover .info {
+  display: block;
+  opacity: 0.92;
+}
+
+@media (max-width: 480px) {
+  .info {
+    width: $small-width !important;
+  }
+}
+
+// .tooltip{
+//   animation-name: shake;
+//   animation-delay: 1s;
+//   animation-duration: 0.82s; 
+//   animation-timing-function: cubic-bezier(.36,.07,.19,.97);
+//   animation-fill-mode: both;
+//   animation-iteration-count: infinite;
+// }

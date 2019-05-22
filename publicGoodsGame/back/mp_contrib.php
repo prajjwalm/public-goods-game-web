@@ -61,7 +61,7 @@
 	
 	//
 	// verify if the player's round is just one more than the soc's
-	// i.e. if the player has completed just one step more, except if bypassed expilictly
+	// i.e. if the player has completed just one step more, except if bypassed explicitly
 	//
 	$rndQuery = "SELECT `rnd` FROM `meta` WHERE `grid` = '$grid'";
 	if ($rndResult = $cxn->query($rndQuery)) {
@@ -188,6 +188,7 @@
 				$return['balance'] = ($r1->fetch_assoc())['last_balance'];
 				$return['carr'] = $r2->fetch_all(MYSQLI_ASSOC);
 				$return['status'] = "perfect contib";
+				$return['rnd'] = $rnd_caller;
 				$r1->close();
 				$r2->close();
 				exit(json_encode($return));
@@ -223,7 +224,7 @@
 			// forcibly poll again, the next poll should get the results
 			$return['update'] = 1;
 			$_SESSION['bypass'] = true;
-			
+			$return['rnd'] = $rnd_caller;
 			exit(json_encode($return));	
 		}
 	} elseif ($return['update'] === 1) {

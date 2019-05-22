@@ -126,6 +126,7 @@
 					$activeSoc = new Society($grid, 1, 100);
 					$return['foo'] = $activeSoc->foo();
 				}
+				$return['rnd'] = $nextRnd;
 				exit(json_encode($return));
 			}
 		
@@ -266,7 +267,7 @@
 		
 				$activeSoc = new Society($grid, 2, 100);
 				$return['bar'] = $activeSoc->bar();
-	
+				$return['rnd'] = $nextRnd;
 				exit(json_encode($return));
 			}
 		

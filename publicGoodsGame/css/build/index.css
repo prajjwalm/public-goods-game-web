@@ -176,12 +176,12 @@ button:hover {
 /* Stylized Text Input */
 .main-input {
   display: block;
-  width: 160px;
+  width: 36%;
   height: 48px;
 }
 
 #name {
-  width: 100%;
+  width: 56%;
 }
 
 .main-input .group {
@@ -212,18 +212,30 @@ button:hover {
   transition: 0.3s ease;
 }
 
-.main-input input:valid:not(:placeholder-shown) ~ label {
-  top: 0;
-  font: 700 10.8px Diavlo-Bold;
-  color: rgba(17, 17, 17, 0.5);
-}
+@supports not (-ms-ime-align: auto) {
+  .main-input input:valid:not(:placeholder-shown) ~ label {
+    top: 0;
+    font: 700 10.8px Diavlo-Bold;
+    color: rgba(17, 17, 17, 0.5);
+  }
 
-.main-input input:invalid:not(:placeholder-shown):not(:focus) ~ label {
-  top: 0;
-  font: 700 10.8px Diavlo-Bold;
-  color: #f00;
+  .main-input input:invalid:not(:placeholder-shown):not(:focus) ~ label {
+    top: 0;
+    font: 700 10.8px Diavlo-Bold;
+    color: #f00;
+  }
 }
+@supports (-ms-ime-align: auto) {
+  .main-input input:valid ~ label {
+    display: none;
+  }
 
+  .main-input input:invalid:not(:focus) ~ label {
+    top: 0;
+    font: 700 10.8px Diavlo-Bold;
+    color: rgba(17, 17, 17, 0.5);
+  }
+}
 .main-input input:focus {
   outline: none;
 }
@@ -246,14 +258,10 @@ button:hover {
 .main-input .bar {
   background: rgba(17, 17, 17, 0.5);
   content: "";
-  width: 160px;
+  width: 100%;
   height: 2.7px;
   transition: 0.3s ease;
   position: relative;
-}
-
-#name .bar {
-  width: 100%;
 }
 
 .main-input .bar:before {

@@ -19,6 +19,12 @@ function poll() {
 				console.log(JSON.stringify(data));
 				// adjust the player log
 				var arr = data["arr"];
+				arr.forEach(function (elmt) {
+					elmt['idx'] = parseInt(elmt['idx']);
+				});
+				arr.sort(function (a, b) {
+					return a['idx'] - b['idx'];
+				});
 				if ($("#meta-controls").length) { // if admin				
 					arr.forEach(function (elmt) {
 						if (!HUMAN_PLAYERS.includes(elmt['idx'])) {
@@ -27,7 +33,7 @@ function poll() {
 							$("#players").append('<div class = "player" style = "order: '+elmt['idx']+';"><span class = "name">'+elmt['name']+'</span></div>');	// <i class="fas fa-user-slash"></i>
 						}
 					});
-				} else {			
+				} else {
 					arr.forEach(function (elmt) {
 						if (!HUMAN_PLAYERS.includes(elmt['idx'])) {
 							HUMAN_POSITIONS[elmt['idx']] = HUMAN_PLAYERS.length;
@@ -83,11 +89,11 @@ function poll() {
 					var total_pop = POP_CNTS.reduce((a,b) => a + b, 0);
 				
 					$("#premsg").hide();
-					$("#game-interface").show();
+					$("#game-interface").css('visibility', 'visible');
 					$("#start").prop('disabled', true);
 
 					$("#meta #botpops .pop-slider").slider("disable");
-					$("#rno").text('1');
+					$("#rno").text(Math.floor(data['mrnd'] / 2));
 					
 					
 					renderGame(total_pop, data['players']);
@@ -146,6 +152,7 @@ function poll() {
 
 
 $(function () {
+    // put backend verification ?
 	if ($("#meta-controls").length) { // if admin, admin's idx is guaranteed to be 1
 		HUMAN_POSITIONS[1] = 0;
 		HUMAN_PLAYERS.push(1);

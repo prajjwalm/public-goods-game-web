@@ -1,0 +1,22 @@
+> Deal with ctrl+shift+r !!! 		|######	|
+> render not ok for host !		|######	|
+> input not ok in edge			|######	|
+> manage rounds properly		|######	|
+> wrong circle highlighted !!		|######	|
+> check why contribs vanished		|######	|
+> rerender turns all cash to 100 temp	|#####?	|
+> set up user support instructions	|######	|
+> opening the game in a small screen 
+results in bad rendering 		|######	|
+> use <enter> instead of mouse clicks	|######	|
+> no bot punishes player		|######	|
+> disable buttons for invalid inputs	|	|
+> disable buttons until UI anim ends	|	|
+> don't take ok input unless game start	|	|
+
+To do: 
+	> switch to prepared statements
+	> improve upon UI
+	> finish all the bots
+	> set up learning modules (can be done locally)
+	> verify exception handling !!!

@@ -48,6 +48,13 @@ function poll_payoff() {
 						$("#contrib").hide();
 						$("#rp").show();
 						
+						if ("rnd" in data) {
+							$("#rno").text('' + Math.floor(data['rnd']/2));
+						} else {
+							console.log("Warning: backend didn't supply round");
+							console.log(data)
+						}
+						
 					}
 				}
 			} else {
@@ -101,6 +108,14 @@ function poll_rp() {
 						$("#rp").hide();
 						$("#contrib").show();
 						
+						if ("rnd" in data) {
+							$("#rno").text('' + Math.floor(data['rnd']/2));
+						} else {
+							console.log("Warning: backend didn't supply round");
+							console.log(data)
+							$("#rno").text('' + (parseInt($("#rno").text()) + 1));
+						}
+						
 					}
 				}
 			} else {
@@ -147,7 +162,13 @@ $(function () {
 						$("#contrib").hide();
 						$("#rp").show();
 						
-						// $("#rno").text(toString(parseInt($("#rno").text())+1));
+						if ("rnd" in data) {
+							$("#rno").text('' + Math.floor(data['rnd']/2));
+						} else {
+							console.log("Warning: backend didn't supply round");
+							console.log(data)
+						}
+						
 					}
 					else {
 						$("#ok").prop('disabled', true);
@@ -158,6 +179,15 @@ $(function () {
 						activeSoc.justice(data['bar']);
 						$("#rp").hide();
 						$("#contrib").show();
+						
+						if ("rnd" in data) {
+							$("#rno").text('' + Math.floor(data['rnd']/2));
+						} else {
+							console.log("Warning: backend didn't supply round");
+							console.log(data);
+							$("#rno").text('' + (parseInt($("#rno").text()) + 1));
+						}
+						
 					} else {
 						$("#ok").prop('disabled', true);	
 						poll_rp();

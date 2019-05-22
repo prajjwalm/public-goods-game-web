@@ -81,7 +81,7 @@ function SocRenderer(pop, data) {
 	this.vBar = [];
 	this.flower_vertex = [];
 	
-	// store the last given data, thinking of the time when you would need to call render without any other input, e.g resize
+    // this.data contains redundant data after first use !
 	if (data !== undefined) {
 		this.data = data;
 	} else this.data = [];
@@ -96,8 +96,8 @@ function SocRenderer(pop, data) {
 			if (!slide) {
 				$("#gamezone #balance").text("$" + (this.balance).toFixed(2));
 				$("#gamezone #balance").css({
-					"top": (center.y - $("#gamezone #balance").height()/2) + "px",
-					"left": (center.x - $("#gamezone #balance").width()/2) + "px"
+					"top": (this.center.y - $("#gamezone #balance").height()/2) + "px",
+					"left": (this.center.x - $("#gamezone #balance").width()/2) + "px"
 				});
 			} else {
 				var gran = 5; 
@@ -107,15 +107,15 @@ function SocRenderer(pop, data) {
 				for (var ii = 0, val = ival; ii < gran; ii++, val += (fval - ival)/gran) {
 					$("#gamezone #balance").text("$" + val.toFixed(2));
 					$("#gamezone #balance").css({							
-						"top": (center.y - $("#gamezone #balance").height()/2) + "px",
-						"left": (center.x - $("#gamezone #balance").width()/2) + "px"
+						"top": (this.center.y - $("#gamezone #balance").height()/2) + "px",
+						"left": (this.center.x - $("#gamezone #balance").width()/2) + "px"
 					});
 					await sleep(time/gran);
 				}
 				$("#gamezone #balance").text("$" + slideTo.toFixed(2));
 				$("#gamezone #balance").css({							
-					"top": (center.y - $("#gamezone #balance").height()/2) + "px",
-					"left": (center.x - $("#gamezone #balance").width()/2) + "px"
+					"top": (this.center.y - $("#gamezone #balance").height()/2) + "px",
+					"left": (this.center.x - $("#gamezone #balance").width()/2) + "px"
 				});
 				
 				this.balance = slideTo;					// only case where balance/member_cash are changed
@@ -130,8 +130,8 @@ function SocRenderer(pop, data) {
 					let memcash_text_width = $("div.dynamic div.member_cash:eq("+j+")").width();
 					let memcash_text_height = $("div.dynamic div.member_cash:eq("+j+")").height();
 					$("div.dynamic div.member_cash:eq("+j+")").css({
-						"top": (center.y - uiRadius * Math.sin(Math.PI * j * 2/this.size) - memcash_text_height/2 + member_cash_offset.y) + "px",
-						"left": (center.x + uiRadius * Math.cos(Math.PI * j * 2/this.size) - memcash_text_width/2 + member_cash_offset.x) + "px"
+						"top": (this.center.y - uiRadius * Math.sin(Math.PI * j * 2/this.size) - memcash_text_height/2 + member_cash_offset.y) + "px",
+						"left": (this.center.x + uiRadius * Math.cos(Math.PI * j * 2/this.size) - memcash_text_width/2 + member_cash_offset.x) + "px"
 					});
 					
 					
@@ -142,8 +142,8 @@ function SocRenderer(pop, data) {
 				let memcash_text_width = $("div.dynamic div.member_cash:eq("+i+")").width();
 				let memcash_text_height = $("div.dynamic div.member_cash:eq("+i+")").height();
 				$("div.dynamic div.member_cash:eq("+i+")").css({
-					"top": (center.y - uiRadius * Math.sin(Math.PI * i * 2/this.size) - memcash_text_height/2 + member_cash_offset.y) + "px",
-					"left": (center.x + uiRadius * Math.cos(Math.PI * i * 2/this.size) - memcash_text_width/2 + member_cash_offset.x) + "px"
+					"top": (this.center.y - uiRadius * Math.sin(Math.PI * i * 2/this.size) - memcash_text_height/2 + member_cash_offset.y) + "px",
+					"left": (this.center.x + uiRadius * Math.cos(Math.PI * i * 2/this.size) - memcash_text_width/2 + member_cash_offset.x) + "px"
 				});
 			}
 		}
@@ -247,6 +247,7 @@ function SocRenderer(pop, data) {
 				$("#pen"+i+" label" ).text("$" + parseFloat(contrib[i]).toFixed(2));
 			}
 		}
+        console.log(this.data);
 	}
 
 	this.justice = async function (red_list) {
@@ -298,7 +299,7 @@ function SocRenderer(pop, data) {
 	}
 	
 	this.render = function(data) {
-		if (data !== undefined) this.data = data;
+		if (data !== undefined && this.data.length == 0) this.data = data;
 		
 		if (this.render_state == 2) return;
 		
@@ -312,7 +313,7 @@ function SocRenderer(pop, data) {
 	
 		game_canvas_X = $("#playground canvas").position().left;
 		game_canvas_Y = $("#playground canvas").position().top;
-		center = {x:game_canvas_X + game_canvas_DIM / 2, y: game_canvas_Y + game_canvas_DIM / 2};		// centre of canvas wrt playground
+		this.center = {x:game_canvas_X + game_canvas_DIM / 2, y: game_canvas_Y + game_canvas_DIM / 2};		// centre of canvas wrt playground
 		member_cash_offset = {x: -2, y: -1};
 		radius = 0.37 * game_canvas_DIM;
 		lstart = 0.05 * game_canvas_DIM;
@@ -378,6 +379,7 @@ function SocRenderer(pop, data) {
 			}
 		}
 
+        // Draw lines
 		this.flower_vertex = [];
 		for (var i = 0; i < this.size; i++) {
 
@@ -409,7 +411,6 @@ function SocRenderer(pop, data) {
 			this.status_circle[i].visible = false;
 			game_canvas.stage.addChild(this.status_circle[i]);
 		}
-		
 		
 		// Draw interaction lines: IMPORTANT: interaction_line [i][j] joins peep i to peep i+j+1
 		for (var i = 0; i < this.size - 1; i++) {
@@ -444,26 +445,30 @@ function SocRenderer(pop, data) {
 			
 			}
 		}
+
 		var ii = 0;
 		for (var idx in this.data) {
 			if (this.data.hasOwnProperty(idx)) {
 
 				// mention the cash 
-				if (this.render_state == 0 ) $(".dynamic").append("<div class = 'member_cash' style = 'order: " + idx + " ;'></div>");
-				
-				this.member_cash[ii] = parseFloat(this.data[idx]['cash']);
-				
-			
-				// idx maintainance
-				ALL_POSITIONS[idx] = ii;
-				ALL_IDXS.push(idx);
-				
-				$(".dynamic .member_cash:eq("+ii+")").text("$" + this.data[idx]['cash']);
+				if (this.render_state == 0 ) {
+                    $(".dynamic").append("<div class = 'member_cash' style = 'order: " + idx + " ;'></div>");
+                    this.member_cash[ii] = parseFloat(this.data[idx]['cash']);
+                    
+                    // idx maintainance
+                    ALL_POSITIONS[idx] = ii;
+                    ALL_IDXS.push(idx);
+                    
+                    // Do NOT overwrite cash if already mentioned
+                }                 
+                console.log(this.data[idx]['cash']);
+                    $(".dynamic .member_cash:eq("+ii+")").text("$" + this.data[idx]['cash']);
+                
 				let memcash_text_width = $(".dynamic .member_cash:eq("+ii+")").width();
 				let memcash_text_height = $(".dynamic .member_cash:eq("+ii+")").height();
 
-				let cash_y = (center.y - uiRadius * Math.sin(Math.PI * ii * 2/this.size) - memcash_text_height/2 + member_cash_offset.y);
-				let cash_x = (center.x + uiRadius * Math.cos(Math.PI * ii * 2/this.size) - memcash_text_width/2 + member_cash_offset.x);
+				let cash_y = (this.center.y - uiRadius * Math.sin(Math.PI * ii * 2/this.size) - memcash_text_height/2 + member_cash_offset.y);
+				let cash_x = (this.center.x + uiRadius * Math.cos(Math.PI * ii * 2/this.size) - memcash_text_width/2 + member_cash_offset.x);
 				
 				if (this.render_state == 0 ) {
 					$("#names").append('<div class="player-name" id="name'+ii+'"> '+ this.data[idx]['name'] +' </div>');
@@ -485,8 +490,8 @@ function SocRenderer(pop, data) {
 				"x": -16,
 				"y": 6
 			}
-			let pen_y = (center.y - (uiRadius) * Math.sin(Math.PI * i * 2/this.size) + pen_offset.y);
-			let pen_x = (center.x + (uiRadius) * Math.cos(Math.PI * i * 2/this.size) + pen_offset.x);			
+			let pen_y = (this.center.y - (uiRadius) * Math.sin(Math.PI * i * 2/this.size) + pen_offset.y);
+			let pen_x = (this.center.x + (uiRadius) * Math.cos(Math.PI * i * 2/this.size) + pen_offset.x);			
 			$("#names #name"+i+".player-name").css({
 				"top": pen_y + "px",
 				"left": pen_x + "px"
@@ -533,6 +538,8 @@ function SocRenderer(pop, data) {
 
 function renderGame(pop, data) {
 	SocReqd = true;
+    console.log(JSON.stringify(data));
+    if (activeSoc) console.log(activeSoc.render_state);
 	if (mainDone && !SocDef) {
 		SocDef = true;
 		activeSoc = new SocRenderer(pop, data);
@@ -602,6 +609,7 @@ async function main() {
 	
 	mainDone = true;
 	if (SocReqd && !SocDef) {
+        // in case of refresh or resize
 		renderGame(pop_mem, data_mem);
 	}
 

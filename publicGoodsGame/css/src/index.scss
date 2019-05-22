@@ -19,8 +19,8 @@ $switch-height: 32px;
 $switch-word-width: 100px;
 $switch-word-font-sz: 22px;
 
-$text-grid-width: 160px;
-$text-name-width: 100%;
+$text-grid-width: 36%;
+$text-name-width: 56%;
 $text-height: 54px;
 
 $button-width: 120px;
@@ -239,19 +239,35 @@ button:hover {
   border-radius: 0;
   color: $normal-font-color;
   font-size: ($text-height/3 - 2);
-font-family: Diavlo-Bold;
+	font-family: Diavlo-Bold;
   transition: 0.3s ease;
 }
-.main-input input:valid:not(:placeholder-shown) ~ label {
-  top: 0;
-  font: 700 $text-height/5 Diavlo-Bold;
-  color: rgba($normal-font-color, 0.5);
+
+@supports not (-ms-ime-align:auto) {								// other browsers
+	.main-input input:valid:not(:placeholder-shown) ~ label {
+		top: 0;
+		font: 700 $text-height/5 Diavlo-Bold;
+		color: rgba($normal-font-color, 0.5);
+	}
+	.main-input input:invalid:not(:placeholder-shown):not(:focus) ~ label {
+		top: 0;
+		font: 700 $text-height/5 Diavlo-Bold;
+		color: $err-font-color;
+	}	
 }
-.main-input input:invalid:not(:placeholder-shown):not(:focus) ~ label {
-  top: 0;
-  font: 700 $text-height/5 Diavlo-Bold;
-  color: $err-font-color;
+
+@supports(-ms-ime-align:auto) {										// ms edge
+	.main-input input:valid ~ label {
+		display: none;
+	}
+	.main-input input:invalid:not(:focus) ~ label {
+		top: 0;
+		font: 700 $text-height/5 Diavlo-Bold;
+		color: rgba($normal-font-color, 0.5);
+	}	
 }
+
+
 .main-input input:focus {
   outline: none;
 }
@@ -271,14 +287,10 @@ font-family: Diavlo-Bold;
 .main-input .bar {
   background: rgba($normal-font-color, 0.5);
   content: "";
-  width: $text-grid-width;
+  width: 100%;
   height: $text-height/20;
   transition: 0.3s ease;
   position: relative;
-}
-
-#name .bar {
-	width: $text-name-width;
 }
 
 .main-input .bar:before {

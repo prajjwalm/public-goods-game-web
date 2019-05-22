@@ -24,7 +24,7 @@ $( function() {
 		  range: "min",
 		  min: 0,
 		  max: 8,
-		  value: 0,
+		  value: POP_CNTS[i],
 		  slide: function( event, ui ) {
 			$( "#meta #botpops .pop-count:eq("+j+")" ).val( ui.value );
 				POP_CNTS[j] = ui.value;

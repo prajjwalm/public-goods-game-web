@@ -238,18 +238,30 @@ button:hover {
   transition: 0.3s ease;
 }
 
-.main-input input:valid:not(:placeholder-shown) ~ label {
-  top: 0;
-  font: 700 12px Diavlo-Bold;
-  color: rgba(17, 17, 17, 0.5);
-}
+@supports not (-ms-ime-align: auto) {
+  .main-input input:valid:not(:placeholder-shown) ~ label {
+    top: 0;
+    font: 700 12px Diavlo-Bold;
+    color: rgba(17, 17, 17, 0.5);
+  }
 
-.main-input input:invalid:not(:placeholder-shown):not(:focus) ~ label {
-  top: 0;
-  font: 700 12px Diavlo-Bold;
-  color: #f00;
+  .main-input input:invalid:not(:placeholder-shown):not(:focus) ~ label {
+    top: 0;
+    font: 700 12px Diavlo-Bold;
+    color: #f00;
+  }
 }
+@supports (-ms-ime-align: auto) {
+  .main-input input:valid ~ label {
+    display: none;
+  }
 
+  .main-input input:invalid:not(:focus) ~ label {
+    top: 0;
+    font: 700 12px Diavlo-Bold;
+    color: rgba(17, 17, 17, 0.5);
+  }
+}
 .main-input input:focus {
   outline: none;
 }
@@ -330,18 +342,32 @@ button:hover {
   transition: 0.3s ease;
 }
 
-.pen-input input:valid:not(:placeholder-shown) ~ label {
-  top: 0;
-  font: 700 6.4px Diavlo-Bold;
-  color: rgba(17, 17, 17, 0.5);
-}
+@supports not (-ms-ime-align: auto) {
+  .pen-input input:valid:not(:placeholder-shown) ~ label {
+    top: 0;
+    font: 700 6.4px Diavlo-Bold;
+    color: rgba(17, 17, 17, 0.5);
+  }
 
-.pen-input input:invalid:not(:placeholder-shown):not(:focus) ~ label {
-  top: 0;
-  font: 700 6.4px Diavlo-Bold;
-  color: #f00;
+  .pen-input input:invalid:not(:placeholder-shown):not(:focus) ~ label {
+    top: 0;
+    font: 700 6.4px Diavlo-Bold;
+    color: #f00;
+  }
 }
+@supports (-ms-ime-align: auto) {
+  .pen-input input:valid ~ label {
+    top: 0;
+    font: 700 6.4px Diavlo-Bold;
+    color: rgba(17, 17, 17, 0.5);
+  }
 
+  .pen-input input:invalid:not(:focus) ~ label {
+    top: 0;
+    font: 700 6.4px Diavlo-Bold;
+    color: #f00;
+  }
+}
 .pen-input input:focus {
   outline: none;
 }
@@ -487,7 +513,7 @@ button:hover {
 
   #game-interface {
     width: 100%;
-    height: auto;
+    height: 280px !important;
     flex-direction: row;
     min-height: 240px;
   }

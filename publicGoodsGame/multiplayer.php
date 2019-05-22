@@ -41,6 +41,7 @@
 		<!-- my style >
 		<link type="text/css" rel="stylesheet" href="css/style.css" /-->
 		<link type="text/css" rel="stylesheet" href="css/build/game.css" />
+		<link type="text/css" rel="stylesheet" href="css/build/tooltip.css" />
 		
 		<!-- my code -->
 		<script src = "js/base.js"></script>
@@ -50,7 +51,7 @@
 		<script src = "js/mp_players.js"></script>
 		<script>		
 		function KeyPress(e) {
-			var evtobj = window.event? event : e
+			var evtobj = window.event? event : e;
 			if (evtobj.keyCode == 90 && evtobj.ctrlKey && evtobj.shiftKey) {
 				$.ajax({
 					type: "POST",
@@ -65,7 +66,9 @@
 						alert(JSON.stringify(data));
 					},
 				});
-			}
+			} else if (evtobj.keyCode === 13 && !evtobj.ctrlKey && !evtobj.shiftKey && GAMEON) {
+                $("#ok").click();
+            }
 		}
 
 		document.onkeydown = KeyPress;
@@ -78,7 +81,7 @@
 	<div id = "main">
 		<div id = "gamezone">
 			<div id = "header" style = "z-index: 1;">
-				Room  <span id = "grno"><?php echo $_SESSION['grid'] ?></span>: Round No.<span id = "rno"><?php echo $_SESSION['rno'] ?></span>
+				Room  <span id = "grno"><?php echo $_SESSION['grid'] ?></span>: Round No.<span id = "rno"><?php echo strval(intdiv($_SESSION['rno'] ,2)) ?></span>
 			</div>						
 			<div id = "playground">
 				<!-- canvas -->
@@ -94,11 +97,18 @@
 				<div class = "dynamic"></div>
 				<div id = "names" class = "dynamic"></div>
 			</div>
-			<div id = "game-interface" style = "display:none;">
+			<div id = "game-interface" style = "visibility:hidden;">
 				<!-- User Inputs -->
 				<div style = "display:none;" id = "rp">
-					Reward/Penalize: 
-					<!-- span id = "pen-desc">to reward/penalize a player, click on the contribution values (in grey and above the cash) and enter the value (positive for rewards, negetive for penalites) </span-->
+					<div id = "rp-info" style = "display: flex; justify-content: space-evenly;">Reward/Penalize: 
+                        <div class="tooltip"><div class="info">
+                            The amount beside each players name is the cash that they contributed in the last round. 
+                            To PUNISH, enter a POSITIVE value, the target's cash will be deducted by that amount and
+                            yours by 20% of that. To REWARD enter a NEGETIVE value, the target's cash will increase 
+                            by that amount and your's will decrease by 120%.
+                            Note: you can enter amounts for zero/multiple players.
+                        </div></div>
+                    </div>		<!-- span id = "pen-desc">to reward/penalize a player, click on the contribution values (in grey and above the cash) and enter the value (positive for rewards, negetive for penalites) </span-->
 					<div id = "penalties"></div> <!-- Container for all the penalty inputs, keep empty -->
 				</div>
 				<div class="main-input" id = "contrib" autocomplete = "off" style = "display:none;">
@@ -117,9 +127,23 @@
 			<?php if ($_SESSION['host'] === true): ?>
 			
 				<div id = "meta" class = "opaque">
-					<p>ADMIN space</p>
+					<div id = "admin-header" style = "display:flex; justify-content: space-evenly; align-items:center;">
+                        <p>ADMIN space</p>
+                        <div class="tooltip"><div class="info">
+                            To begin the game click on the Start button below, note
+                            that no player/bot may be added after the game has begun.
+                        </div></div>
+                    </div>
 					<div id = "pop-manager">
+                        <div id = "pop-manager-header"  style = "display:flex; justify-content: space-between; align-items:center;">
 						&nbsp;&nbsp;Bot Populations:
+                        <div class="tooltip"><div class="info">
+                            Adjust the sliders to fix the bot populations, including bots
+                            is entirely optional (clicking start with all sliders to zero
+                            begins the game without any bots). If you have no idea as to 
+                            what to set the sliders at, best leave them in the initial state
+                        </div></div>
+                        </div>
 						<div id = "hatspace"></div>
 						<div id = "botpops">
 							<input type="text" class="pop-count" readonly>
@@ -137,12 +161,24 @@
 						</div>
 					</div>
 					<div id = "player-manager">
+                        <div id = "player-manager-header"  style = "display:flex; justify-content: space-between; align-items:center;margin-bottom:4px;">
 						Players Participating:
+                        <div class="tooltip"><div class="info">
+                            This shows the players currently in the gameroom, wait for 
+                            everyone to join before starting the game, as no new players
+                            may be added afterwords. Should a player disconnect, he/ she
+                            will have around 30s to reestablish connection, failing which
+                            he/she shall be removed from the game. <br/>
+                            PS. the crown icon in the player list denotes the host, he/she
+                            alone can start the game, but will have no advantages once the 
+                            game begins
+                        </div></div>
+                        </div>
 						<div id = "players">
 							<div class = "admin player" style = "order: 1;"><span class = "name"><?php echo $_SESSION['name']?></span><i class="fas fa-crown"></i></div>
 						</div>
 					</div>
-					<div id = "meta-controls">
+					<div id = "meta-controls" style = "display:flex; justify-content:space-evenly;">
 						<button id = "start">Start</button>
 						<!--button id = "abort">Abort</button-->
 						<button id = "end" style = "display:none;">End</button>
@@ -152,7 +188,13 @@
 				<div id = "meta" class = "opaque">
 					<p>Meta Data</p>
 					<div id = "pop-manager">
+                        <div id = "pop-manager-header"  style = "display:flex; justify-content: space-between; align-items:center;">
 						&nbsp;&nbsp;Bot Populations:
+                        <div class="tooltip"><div class="info">
+                            Once the game begins, this section will show the number of bots 
+                            participating per category. This population division is decided by the host.
+                        </div></div>
+                        </div>
 						<div id = "hatspace"></div>
 						<div id = "botpops-view">
 							<input type="text" class="pop-count" readonly>
@@ -163,7 +205,18 @@
 						</div>
 					</div>
 					<div id = "player-manager">
+                        <div id = "player-manager-header"  style = "display:flex; justify-content: space-between; align-items:center;margin-bottom:4px;">
 						Players Participating:
+                        <div class="tooltip"><div class="info">
+                            This shows the players currently in the gameroom.
+                            Should a player disconnect, he/she will have around
+                            30s to reestablish connection, failing which he/she 
+                            shall be removed from the game. <br/>
+                            PS. the crown icon in the player list denotes the host, he/she
+                            alone can start the game, but will have no advantages once the 
+                            game begins
+                        </div></div>
+                        </div>
 						<div id = "players">
 						</div>
 					</div>

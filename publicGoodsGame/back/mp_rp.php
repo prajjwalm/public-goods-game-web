@@ -195,6 +195,7 @@
 				$return['bar'] = unserialize(base64_decode(($r->fetch_assoc())['rp']));
 				$r->close();
 				$return['status'] = "perfect rp";
+				$return['rnd'] = $rnd_caller;
 				exit(json_encode($return));
 			} else {
 				$return['status'] = "error";
@@ -222,7 +223,7 @@
 			// forcibly poll again
 			$return['update'] = 1;
 			$_SESSION['bypass'] = true;
-			
+			$return['rnd'] = $rnd_caller;
 			exit(json_encode($return));	
 		}
 	} elseif ($return['update'] === 1) {
