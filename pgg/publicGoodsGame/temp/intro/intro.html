@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel = "stylesheet" href = "intro.css">
+		<link href="../../../publicGoodsGame/assets/icons/fa/css/all.min.css" rel="stylesheet">
+		<script src = "../../../publicGoodsGame/js/lib/jquery-3.2.1.min.js"></script>
+        <script>
+            var ino = 0;
+            $(document).keydown(function (e) {
+                var nimages = $(".intro-img").length;
+                var leave = false;
+
+                switch(e.which) {
+
+                    case 13: // enter
+                    case 40: // down
+                    case 39: // right
+                        if (ino < nimages) ino++;
+                        if (ino >= nimages) leave = true;
+                    break;
+
+                    case 38: // up
+                    case 37: // left
+                        if (ino > 0) ino--;
+                    break;
+
+                    case 27: // escape
+                        leave = true;
+                    break;
+
+                    default: return; // exit this handler for other keys
+                }
+                if (leave) {
+                    $("#intro").hide();
+                } else {
+                    $(".intro-img:not(:eq("+ino+"))").hide();
+                    $(".intro-img:eq("+ino+")").show();
+                }
+                e.preventDefault(); // prevent the default action (scroll / move caret)
+            });
+
+
+        </script>
+    </head>
+    <body>
+        <div id = "intro">
+            <div id = "intro-popup">
+                <button id = "intro-close"><i class="fas fa-times-circle"></i></button>
+                <div id = "intro-img-space">
+                    <img class = "intro-img" src = "info1.png"></img>
+                    <img class = "intro-img" src = "info2.png" style = "display:none;"></img>
+                    <img class = "intro-img" src = "info3.png" style = "display:none;"></img>
+                </div>
+                <button id = "intro-next"> <i class="fas fa-chevron-circle-right"></i> </button>
+                <button id = "intro-prev"> <i class="fas fa-chevron-circle-left"></i> </button>
+            </div>
+        </div>
+    </body>
+</html>

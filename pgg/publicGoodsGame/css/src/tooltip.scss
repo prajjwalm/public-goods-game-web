@@ -1,0 +1,112 @@
+$white: #ccc;
+$off-white: #eee;
+$full-width: 240px;
+$small-width: 108px;
+$tooltip-size: 18px;
+
+@keyframes shake {
+  5%, 45% {
+    transform: translate(-0.3px, 0);
+  }
+  
+  10%, 40% {
+    transform: translate(0.6px, 0);
+  }
+
+  15%, 25%, 35% {
+    transform: translate(-1px, 0);
+  }
+
+  20%, 30% {
+    transform: translate(1px, 0);
+  }
+
+  0% , 50% {
+    transform: translate(0,0);
+  }
+}
+
+.tooltip {  
+  width: $tooltip-size;
+  height: $tooltip-size;
+  border-radius: 50%;
+  border: 2px solid $white;
+  background: rgba($white,.5);
+  line-height: $tooltip-size;
+  text-align: center;
+  font-size: $tooltip-size - 2px;
+  z-index: 2;
+}
+
+.tooltip:not(:hover) {
+  animation: shake 2s cubic-bezier(.36,.07,.19,.97) 1s infinite normal both;
+  -moz-animation: shake 2s cubic-bezier(.36,.07,.19,.97) 1s infinite normal both;
+  -webkit-animation: shake 2s cubic-bezier(.36,.07,.19,.97) 1s infinite normal both;
+}
+
+.info {
+  padding:10px;
+  position:absolute;
+  font-size: 14px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  text-align: justify;
+  transform: translate(-84px, calc(-100% - 24px));
+  width: $full-width;
+  background:rgba($off-white,1);
+  border-radius:6px;
+  display: none;
+	box-shadow: 0 2px 6px 0 rgba(0,0,0,0.16),0  2px 14px 0 rgba(0,0,0,0.12);
+  z-index: 2;
+}
+
+// in index.php
+#start-info .info {
+  width: 320px;
+}
+
+// in multiplayer.php admin version
+#admin-header .info {
+  width: $full-width !important;
+  transform: translate(-200px, calc(-100% - 24px));
+}
+
+#canvas-info {
+  position: absolute;
+  z-index: 1;
+}
+
+#pop-manager-header .info {
+  width: $full-width + 10px !important;
+  transform: translate(calc(-100% + 4px), calc(-100% - 18px));
+}
+#player-manager-header .info {
+  width: $full-width + 40px !important;
+  transform: translate(-100%, calc(-100% - 18px));
+}
+
+#rp-info .info {
+  width: $full-width * 1.6 !important;
+  font-size: 12px;
+  transform: translate(-75%, 20px);
+}
+
+#header-info .info {
+  transform: translate(10%, 10%);
+  z-index: 2;
+}
+
+.tooltip:hover .info {
+  display: block;
+  opacity: .92;
+}
+
+@media (max-width: 480px) {
+  #start-info .info {
+    position: absolute;
+    left: 50%;
+    -webkit-transform: translate(-50%, calc(-100% - 10px));
+    transform: translate(-50%, calc(-100% - 10px));
+    width: 272px;
+  }
+
+}
