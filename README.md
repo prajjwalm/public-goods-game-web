@@ -27,6 +27,5 @@ __Limitations(s)__: These bots have been developed mainly by observing various s
 
 
 ## The Theoretical Analysis
-_currently in progress, will be updated soon_
 
-__Work Being Done__: Agents that can match human gameplay are being developed, using functional experience weighted attraction (a learning theory that borrows from reinforcement and belief learning techniques). These will be used to predict and analyze human behavior.
+This section is part of my repository public-goods-game-res.
