@@ -4,7 +4,8 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 $( function() {
-	for (var i = 0 ; i < 5; i++){
+	let i;
+	for (i = 0; i < 5; i++){
 		$( "#meta #botpops .pop-slider:eq("+i+")" ).css({
 			"left": "" + (18 + 36 * i) + "px"
 		});
@@ -12,12 +13,12 @@ $( function() {
 			"left": "" + (18 + 36 * i) + "px"
 		});
 	}
-	for (var i = 0 ; i < 5; i++){
+	for (i = 0; i < 5; i++){
 		$( "#meta #botpops-view .pop-count:eq("+i+")" ).css({
 			"left": "" + (18 + 36 * i) + "px"
 		});
 	}
-	for (var i = 0 ; i < 5; i++){
+	for (i = 0; i < 5; i++){
 		let j = i;
 		$( "#meta #botpops .pop-slider:eq("+j+")" ).slider({
 		  orientation: "vertical",

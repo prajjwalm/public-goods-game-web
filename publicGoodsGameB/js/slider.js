@@ -16,10 +16,4 @@ var rangeSlider = function(){
   });
 };
 
-var refreshRange = function () {
-    $(".range-slider__range").each(function () {
-        $(this).attr('value', '0');
-    })
-};
-
 $( rangeSlider );

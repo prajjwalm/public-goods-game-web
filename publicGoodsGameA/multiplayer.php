@@ -134,7 +134,7 @@
 				<div style = "display:none;" id = "rp">
 					<div id = "rp-info" style = "display: flex; justify-content: space-evenly;">Penalize:
                         <div class="tooltip">?<div class="info">
-                        Adjust the sliders to penalize a person. Negetive values (moving the slider left) reduce the
+                        Adjust the sliders to penalize a person. Negative values (moving the slider left) reduce the
                         target's cash the amount given beside the slider and your's by 60% of it.
                         Shifting your own slider will have no effect. You can move as many sliders as you want.
                         </div></div>
