@@ -12,7 +12,7 @@ var SocReqd = false;
 var mainDone = false;
 var pop_mem = [];
 var data_mem = [];
-var RP_FACTOR = 1/0.6;
+const RP_FACTOR = 1 / 0.6;
 
 var ALL_POSITIONS = {};
 var ALL_IDXS = [];
@@ -138,7 +138,7 @@ function SocRenderer(pop, data) {
                     let roomid = parseInt($("#roomid").text());
                     let roompos = HUMAN_POSITIONS[roomid];
 
-                    if (j == roompos) {
+                    if (j === roompos) {
                         // both sliders, contrib and rp
                         $(".range-slider__range").attr('max', Math.round(this.member_cash[roompos]));
                         $(".range-slider__range").prop('value', 0);
@@ -158,7 +158,7 @@ function SocRenderer(pop, data) {
                 let roomid = parseInt($("#roomid").text());
                 let roompos = HUMAN_POSITIONS[roomid];
 
-                if (i == roompos) {
+                if (i === roompos) {
                         // both sliders, contrib and rp
                         $(".range-slider__range").attr('max', Math.round(this.member_cash[roompos]));
                         $(".range-slider__range").prop('value', 0);
@@ -217,7 +217,7 @@ function SocRenderer(pop, data) {
             dividend = balance/mem_cnt;
             err = err || !approxeq(final_cash[i] - initial_cash[i], dividend - parseFloat(contrib[i]), 1);
 
-            // in case the database indices aren't consequetive
+            // in case the database indices aren't consecutive
             icash_arr.push(parseFloat(initial_cash[i]));
             fcash_arr.push(parseFloat(final_cash[i]));
             contrib_arr.push(parseFloat(contrib[i]));
@@ -240,7 +240,7 @@ function SocRenderer(pop, data) {
             chk_balance *= 2; 		// mf: make global
 
             if (!approxeq(balance, chk_balance, 1)) {
-                console.log("fatal error: balance not according to contribs");
+                console.log("fatal error: balance not according to contributions");
                 console.log("balance: "+balance+", check_balance: "+chk_balance);
                 console.log(chk_balance);
             }
@@ -284,26 +284,26 @@ function SocRenderer(pop, data) {
         console.log(this.data);
     };
 
-	this.justice = async function (red_list) {
-		// ui function for rewards and punishments
-		
-		for (let entry of red_list) {	
-			punisher_pos = ALL_POSITIONS[parseInt(entry['midx'])];
-			punished_pos = ALL_POSITIONS[parseInt(entry['idx'])];
-			punisher_cash = parseFloat(entry['cm']);
-			punished_cash = parseFloat(entry['ci']);
-			punishment_if = entry['rp'];					// if punishment then false, boolean
-			console.log(punishment_if);
-			
-			// initial graphics rendering
-			if (punishment_if) {
-				$("#playground div.api div.dynamic div.member_cash:eq("+punisher_pos+")").css({ "color": "#770000"});
-				$("#playground div.api div.dynamic div.member_cash:eq("+punished_pos+")").css({ "color": "#ff0000"});
-			} else {
-				$("#playground div.api div.dynamic div.member_cash:eq("+punisher_pos+")").css({ "color": "#003300"});
-				$("#playground div.api div.dynamic div.member_cash:eq("+punished_pos+")").css({ "color": "#007700"});
-			}
-			
+    this.justice = async function (red_list) {
+        // ui function for rewards and punishments
+
+        for (let entry of red_list) {
+            punisher_pos = ALL_POSITIONS[parseInt(entry['midx'])];
+            punished_pos = ALL_POSITIONS[parseInt(entry['idx'])];
+            punisher_cash = parseFloat(entry['cm']);
+            punished_cash = parseFloat(entry['ci']);
+            punishment_if = entry['rp'];					// if punishment then false, boolean
+            console.log(punishment_if);
+
+            // initial graphics rendering
+            if (punishment_if) {
+                $("#playground div.api div.dynamic div.member_cash:eq("+punisher_pos+")").css({ "color": "#770000"});
+                $("#playground div.api div.dynamic div.member_cash:eq("+punished_pos+")").css({ "color": "#ff0000"});
+            } else {
+                $("#playground div.api div.dynamic div.member_cash:eq("+punisher_pos+")").css({ "color": "#003300"});
+                $("#playground div.api div.dynamic div.member_cash:eq("+punished_pos+")").css({ "color": "#007700"});
+            }
+
 			if (punisher_pos < punished_pos) {
 				var i1 = punisher_pos;
 				var i2 = punished_pos - punisher_pos - 1;
@@ -313,14 +313,14 @@ function SocRenderer(pop, data) {
 			}
 			if (punishment_if) this.interaction_line_act[i1][i2].visible = true;
 			else this.interaction_line_pos[i1][i2].visible = true;
-			
-			this.member_cash[punished_pos] = punished_cash;
-			this.member_cash[punisher_pos] = punisher_cash;
-			
-			this.updateUI(false, true, punished_pos);
-			this.updateUI(false, true, punisher_pos);
-			
-			await sleep(this.justice_sleep);
+
+            this.member_cash[punished_pos] = punished_cash;
+            this.member_cash[punisher_pos] = punisher_cash;
+
+            this.updateUI(false, true, punished_pos);
+            this.updateUI(false, true, punisher_pos);
+
+            await sleep(this.justice_sleep);
 
 
             // final graphics rendering

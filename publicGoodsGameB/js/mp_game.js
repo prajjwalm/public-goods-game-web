@@ -46,7 +46,7 @@ function poll_payoff() {
 						
 						$("#ok").prop('disabled', false);
 						$("#contrib").hide();
-						$("#rp").show();         // #NORP
+						if (Math.random() < 0.25) $("#rp").show();         // #NORP
 						if ("rnd" in data) {
 							$("#rno").text('' + Math.floor(data['rnd']/2));
 						} else {
@@ -176,7 +176,7 @@ $(function () {
                         if (data['all_done']) {
                             activeSoc.call(	data['foo']['coarr'], data['foo']['carr'], parseFloat(data['foo']['balance']));						
                             $("#contrib").hide();
-                            $("#rp").show();    // #NORP
+                            if (Math.random() < 0.25) $("#rp").show();    // #NORP
                             
                             if ("rnd" in data) {
                                 $("#rno").text('' + Math.floor(data['rnd']/2));

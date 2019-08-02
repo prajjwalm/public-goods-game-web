@@ -123,13 +123,13 @@ function poll() {
 						if (data['srnd'] % 2 == 1) {
 							if (data['srnd'] != data['mrnd'] + 1) console.log("deadly error: srnd = " + data['srnd'] + ", mrnd = " + data['mrnd'] + ", exp: s = m + 1");
 							$("#contrib").hide();
-							$("#rp").show(); //#NORP
+							if (Math.random() < 0.25) $("#rp").show(); //#NORP
 							$("#ok").prop('disabled', true);
 							poll_rp();
 						} else {
 							if (data['srnd'] != data['mrnd']) console.log("deadly error: srnd = " + data['srnd'] + ", mrnd = " + data['mrnd'] + ", exp: s = m");
 							$("#contrib").hide();
-							$("#rp").show(); //#NORP
+							if (Math.random() < 0.25) $("#rp").show(); //#NORP
 							$("#ok").prop('disabled', false);
 						}
 					}

@@ -756,10 +756,8 @@
                         if (($rpval != 0) && ($this->Cash[$Midx] > $x)) {
                             $this->Cash[$idx] += $rpval;
                             $this->Cash[$Midx] -= $x;
-
                             if ($this->Cash[$idx] < 0.001) $this->Cash[$idx] = 0;
                             if ($this->Cash[$Midx] < 0.001) $this->Cash[$Midx] = 0;
-
                             $rp_log[] = [
                                 "midx" => $Midx,
                                 "idx" => $idx,

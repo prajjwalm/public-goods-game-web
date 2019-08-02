@@ -13,7 +13,7 @@ var mainDone = false;
 var pop_mem = [];
 var data_mem = [];
 const RP_FACTOR = 1 / 0.6;
-const MIN = -25;
+const MIN = -50;
 
 var ALL_POSITIONS = {};
 var ALL_IDXS = [];
@@ -139,12 +139,15 @@ function SocRenderer(pop, data) {
                     let roomid = parseInt($("#roomid").text());
                     let roompos = HUMAN_POSITIONS[roomid];
 
-                    if (j == roompos) {
+                    if (j === roompos) {
                         $("#contrib .range-slider__range").attr('max', Math.round(this.member_cash[roompos]));
 
-                        // both sliders, contrib and rp
-                        $(".range-slider__range").prop('value', 0);
-                        $(".range-slider__value").text('0');
+                        $("#contrib .range-slider__range").prop('value', 0);
+                        $("#contrib .range-slider__value").text('0');
+                        $("#rp .range-slider__range").prop('value', -MIN/2);
+                        $("#rp .range-slider__value").prop('text', -MIN/2);
+
+
                         let cash_deductable = RP_FACTOR*this.member_cash[roompos];
 
                         let member_cash_alias = this.member_cash;
@@ -162,7 +165,7 @@ function SocRenderer(pop, data) {
                 let roomid = parseInt($("#roomid").text());
                 let roompos = HUMAN_POSITIONS[roomid];
 
-                if (i == roompos) {
+                if (i === roompos) {
                     $("#contrib .range-slider__range").attr('max', Math.round(this.member_cash[roompos]));
 
                     // both sliders, contrib and rp

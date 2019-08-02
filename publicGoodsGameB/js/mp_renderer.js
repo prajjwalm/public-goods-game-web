@@ -13,7 +13,7 @@ var mainDone = false;
 var pop_mem = [];
 var data_mem = [];
 const RP_FACTOR = 1 / 0.6;
-const STEP = 25;
+const MIN = -200;
 
 var ALL_POSITIONS = {};
 var ALL_IDXS = [];
@@ -139,18 +139,21 @@ function SocRenderer(pop, data) {
                     let roomid = parseInt($("#roomid").text());
                     let roompos = HUMAN_POSITIONS[roomid];
 
-                    if (j == roompos) {
+                    if (j === roompos) {
                         $("#contrib .range-slider__range").attr('max', Math.round(this.member_cash[roompos]));
 
-                        // both sliders, contrib and rp
-                        $(".range-slider__range").prop('value', 0);
-                        $(".range-slider__value").text('0');
+                        $("#contrib .range-slider__range").prop('value', 0);
+                        $("#contrib .range-slider__value").text('0');
+                        $("#rp .range-slider__range").prop('value', -MIN/2);
+                        $("#rp .range-slider__value").prop('text', -MIN/2);
+
+
                         let cash_deductable = RP_FACTOR*this.member_cash[roompos];
 
                         let member_cash_alias = this.member_cash;
                         $("#penalties .range-slider__range").each (function (idx) {
                             let minVal = -Math.round(member_cash_alias[idx]<cash_deductable ? member_cash_alias[idx]:cash_deductable);
-                            if (minVal % STEP != 0) minVal -= minVal % STEP;
+                            if (minVal < MIN) minVal = MIN;
                             $(this).attr('min', minVal);
                         });
                     }
@@ -162,7 +165,7 @@ function SocRenderer(pop, data) {
                 let roomid = parseInt($("#roomid").text());
                 let roompos = HUMAN_POSITIONS[roomid];
 
-                if (i == roompos) {
+                if (i === roompos) {
                     $("#contrib .range-slider__range").attr('max', Math.round(this.member_cash[roompos]));
 
                     // both sliders, contrib and rp
@@ -173,7 +176,7 @@ function SocRenderer(pop, data) {
                     let member_cash_alias = this.member_cash;
                     $("#penalties .range-slider__range").each (function (idx) {
                         let minVal = -Math.round(member_cash_alias[idx]<cash_deductable ? member_cash_alias[idx]:cash_deductable);
-                        if (minVal % STEP != 0) minVal -= minVal % STEP;
+                        if (minVal < MIN) minVal = MIN;
                         $(this).attr('min', minVal);
                     });
                 }
@@ -311,7 +314,6 @@ function SocRenderer(pop, data) {
                 $("#playground div.api div.dynamic div.member_cash:eq("+punished_pos+")").css({ "color": "#007700"});
             }
 
-            //
             // if (punisher_pos < punished_pos) {
             //     var i1 = punisher_pos;
             //     var i2 = punished_pos - punisher_pos - 1;
@@ -321,7 +323,6 @@ function SocRenderer(pop, data) {
             // }
             // if (punishment_if) this.interaction_line_act[i1][i2].visible = true;
             // else this.interaction_line_pos[i1][i2].visible = true;
-            //
 
             this.member_cash[punished_pos] = punished_cash;
             this.member_cash[punisher_pos] = punisher_cash;
@@ -532,7 +533,7 @@ function SocRenderer(pop, data) {
                     $("#canvas-info").show();
 
                     $("#penalties").append(`<div class="pen-input" id="pen${idx}"><span class = "target">${this.data[idx]['name']}</span>
-<div class="range-slider group"><input class="range-slider__range" type="range" value="0" min="-100" max="0" step="${STEP}">
+<div class="range-slider group"><input class="range-slider__range" type="range" value="0" min="${MIN}" max="0" step="1">
 <span class="range-slider__value"  id="p${idx}">0</span></div></div>`)
                 }
 

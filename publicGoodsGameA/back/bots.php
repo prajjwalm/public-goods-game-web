@@ -752,7 +752,8 @@
             foreach ($this->RP as $Midx => $rprow) {
                 foreach ($rprow as $idx => $rpval) {
                     if ($idx != $Midx) {
-                        if ($rpval < -25) $rpval = -25;
+                        if ($rpval < -50) $rpval = -50;
+
                         $x = ($rpval > 0) ? 0 : $p_factor * (-$rpval);
                         if (($rpval != 0) && ($this->Cash[$Midx] > $x)) {
                             $this->Cash[$idx] += $rpval;
