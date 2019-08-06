@@ -23,14 +23,14 @@ var ALL_IDXS = [];
 
 /* PIXI aliases */
 let Application = PIXI.Application,
-	loader = PIXI.loader,
-	resources = PIXI.loader.resources,
-	Sprite = PIXI.Sprite,
-	Graphics = PIXI.Graphics,
-	Text = PIXI.Text,
-	Container = PIXI.Container,
-	TextureCache = PIXI.utils.TextureCache;
-	
+    loader = PIXI.loader,
+    resources = PIXI.loader.resources,
+    Sprite = PIXI.Sprite,
+    Graphics = PIXI.Graphics,
+    Text = PIXI.Text,
+    Container = PIXI.Container,
+    TextureCache = PIXI.utils.TextureCache;
+
 let Rectangle = PIXI.Rectangle;
 
 var waitForFinalEvent = (function () {
@@ -44,96 +44,97 @@ var waitForFinalEvent = (function () {
     }
     timers[uniqueId] = setTimeout(callback, ms);
   };
-})();	
+})();
 
 
 function SocRenderer(pop, data) {
-	
-	// render consts
-	var center;
-	var member_cash_offset;
-	var radius;
-	var lstart;
-	var lend;
-	var uiRadius;
-	var hBar_maxlen;
-	var vBar_maxlen;
-	
-	// Constants
-	this.punish_enable = false;
-	this.call_sleep = 75;
-	this.payoff_isleep = 250;
-	this.payoff_fsleep = 250;										// this is actually half the value
-	this.justice_sleep = 200;
-	
-	// Render Objects, vars and consts
-	this.size = pop;
-	this.render_state = 0;
-	this.peep = [];
-	this.inert_line = [];
-	this.active_line = [];
-	this.status_circle = [];
-	this.interaction_line = [];
-	this.interaction_line_act = [];
-	this.interaction_line_pos = [];
-	
-	this.hBar = [];
-	this.vBar = [];
-	this.flower_vertex = [];
-	
-    // this.data contains redundant data after first use !
-	if (data !== undefined) {
-		this.data = data;
-	} else this.data = [];
-	
-	
-	this.balance = 0.0;
-	this.member_cash = [];
-	
-	this.updateUI = async function (balance = false, member = false, i = this.size, slide = false, slideTo = 0){
-		if (balance) {
-			// update balance
-			if (!slide) {
-				$("#gamezone #balance").text("$" + Math.round(this.balance));
-				$("#gamezone #balance").css({
-					"top": (this.center.y - $("#gamezone #balance").height()/2) + "px",
-					"left": (this.center.x - $("#gamezone #balance").width()/2) + "px"
-				});
-			} else {
-				var gran = 5; 
-				var ival = this.balance;
-				var fval = slideTo;
-				var time = this.payoff_fsleep;
-				for (var ii = 0, val = ival; ii < gran; ii++, val += (fval - ival)/gran) {
-					$("#gamezone #balance").text("$" + Math.round(val));
-					$("#gamezone #balance").css({							
-						"top": (this.center.y - $("#gamezone #balance").height()/2) + "px",
-						"left": (this.center.x - $("#gamezone #balance").width()/2) + "px"
-					});
-					await sleep(time/gran);
-				}
-				$("#gamezone #balance").text("$" + Math.round(slideTo));
-				$("#gamezone #balance").css({							
-					"top": (this.center.y - $("#gamezone #balance").height()/2) + "px",
-					"left": (this.center.x - $("#gamezone #balance").width()/2) + "px"
-				});
-				
-				this.balance = slideTo;					// only case where balance/member_cash are changed
-			}
-		}
 
-		if (member) {
-			if (i === this.size) {
-				for (var j = 0; j < this.size; j++) {
-					// cash
-					$("div.dynamic div.member_cash:eq("+j+") .m_cash").text("$" + Math.round(this.member_cash[j]));
-					let memcash_text_width = $("div.dynamic div.member_cash:eq("+j+")").width();
-					let memcash_text_height = $("div.dynamic div.member_cash:eq("+j+")").height();
-					$("div.dynamic div.member_cash:eq("+j+")").css({
-						"top": (this.center.y - uiRadius * Math.sin(Math.PI * j * 2/this.size) - memcash_text_height/2 + member_cash_offset.y) + "px",
-						"left": (this.center.x + uiRadius * Math.cos(Math.PI * j * 2/this.size) - memcash_text_width/2 + member_cash_offset.x) + "px"
-					});
-					
+    // render consts
+    var center;
+    var member_cash_offset;
+    var radius;
+    var lstart;
+    var lend;
+    var uiRadius;
+    var hBar_maxlen;
+    var vBar_maxlen;
+
+    // Constants
+    this.punish_enable = false;
+    this.call_sleep = 75;
+    this.payoff_isleep = 250;
+    this.payoff_fsleep = 250;										// this is actually half the value
+    this.justice_sleep = 200;
+
+    // Render Objects, vars and consts
+    this.size = pop;
+    this.render_state = 0;
+    this.peep = [];
+    this.inert_line = [];
+    this.active_line = [];
+    this.status_circle = [];
+    this.interaction_line = [];
+    this.interaction_line_act = [];
+    this.interaction_line_pos = [];
+
+    this.hBar = [];
+    this.vBar = [];
+    this.flower_vertex = [];
+
+    // this.data contains redundant data after first use !
+    if (data !== undefined) {
+        this.data = data;
+    } else this.data = [];
+
+    this.balance = 0.0;
+    this.member_cash = [];
+
+    this.updateUI = async function (balance = false, member = false, i = this.size, slide = false, slideTo = 0){
+        if (balance) {
+            // update balance
+            let balance_obj = $("#gamezone #balance");
+            if (!slide) {
+                balance_obj.text("$" + Math.round(this.balance));
+                balance_obj.css({
+                    "top": (this.center.y - balance_obj.height()/2) + "px",
+                    "left": (this.center.x - balance_obj.width()/2) + "px"
+                });
+            } else {
+                var gran = 5;
+                var ival = this.balance;
+                var fval = slideTo;
+                var time = this.payoff_fsleep;
+                for (var ii = 0, val = ival; ii < gran; ii++, val += (fval - ival)/gran) {
+                    balance_obj.text("$" + Math.round(val));
+                    balance_obj.css({
+                        "top": (this.center.y - balance_obj.height()/2) + "px",
+                        "left": (this.center.x - balance_obj.width()/2) + "px"
+                    });
+                    await sleep(time/gran);
+                }
+                balance_obj.text("$" + Math.round(slideTo));
+                balance_obj.css({
+                    "top": (this.center.y - balance_obj.height()/2) + "px",
+                    "left": (this.center.x - balance_obj.width()/2) + "px"
+                });
+
+                this.balance = slideTo;					// only case where balance/member_cash are changed
+            }
+        }
+
+        if (member) {
+            if (i === this.size) {
+                for (let j = 0; j < this.size; j++) {
+                    // cash
+                    $("div.dynamic div.member_cash:eq("+j+") .m_cash").text("$" + Math.round(this.member_cash[j]));
+                    let member_cash_j_obj = $("div.dynamic div.member_cash:eq("+j+")");
+                    let memcash_text_width = member_cash_j_obj.width();
+                    let memcash_text_height = member_cash_j_obj.height();
+                    member_cash_j_obj.css({
+                        "top": (this.center.y - uiRadius * Math.sin(Math.PI * j * 2/this.size) - memcash_text_height/2 + member_cash_offset.y) + "px",
+                        "left": (this.center.x + uiRadius * Math.cos(Math.PI * j * 2/this.size) - memcash_text_width/2 + member_cash_offset.x) + "px"
+                    });
+
                     let roomid = parseInt($("#roomid").text());
                     let roompos = HUMAN_POSITIONS[roomid];
                     

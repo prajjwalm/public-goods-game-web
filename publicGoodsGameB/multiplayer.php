@@ -52,7 +52,7 @@
 		<script>		
 		function KeyPress(e) {
 			var evtobj = window.event? event : e;
-			if (evtobj.keyCode == 90 && evtobj.ctrlKey && evtobj.shiftKey) {
+			if (evtobj.keyCode === 90 && evtobj.ctrlKey && evtobj.shiftKey) {
 				$.ajax({
 					type: "POST",
 					url: "../publicGoodsGame/back/showsession.php",
@@ -79,13 +79,13 @@
 
 	<body>    
     <?php if ($_SESSION['rno'] == 0): ?>
-    <div id = "intro">
+    <!--div id = "intro">
         <div id = "intro-popup">
             <button id = "intro-close"><i class="fas fa-times-circle"></i></button>
             <div id = "intro-img-space">
-                <!--img class = "intro-img" src = "../publicGoodsGame/assets/images/info0_c.png"></img>
+                < !--img class = "intro-img" src = "../publicGoodsGame/assets/images/info0_c.png"></img>
                 <img class = "intro-img" src = "../publicGoodsGame/assets/images/info1_c.png" style = "display:none;"></img>
-                <img class = "intro-img" src = "../publicGoodsGame/assets/images/info2_c.png" style = "display:none;"></img  #NORP-->
+                <img class = "intro-img" src = "../publicGoodsGame/assets/images/info2_c.png" style = "display:none;"></img  #NORP-- >
                 <img class = "intro-img" src = "../publicGoodsGame/assets/images/info0.png"></img>
                 <img class = "intro-img" src = "../publicGoodsGame/assets/images/info1.png" style = "display:none;"></img>
                 <img class = "intro-img" src = "../publicGoodsGame/assets/images/info2.png" style = "display:none;"></img>
@@ -94,7 +94,7 @@
             <button id = "intro-next"> <i class="fas fa-chevron-circle-right"></i> </button>
             <button id = "intro-prev"> <i class="fas fa-chevron-circle-left"></i> </button>
         </div>
-    </div>
+    </div-->
     <?php endif ?>
 	<div id = "main">
 		<div id = "gamezone">
@@ -134,7 +134,7 @@
 				<div style = "display:none;" id = "rp">
 					<div id = "rp-info" style = "display: flex; justify-content: space-evenly;">Penalize:
                         <div class="tooltip">?<div class="info">
-                        Adjust the sliders to penalize a person. Negetive values (moving the slider left) reduce the
+                        Adjust the sliders to penalize a person. Negative values (moving the slider left) reduce the
                         target's cash the amount given beside the slider and your's by 60% of it.
                         Shifting your own slider will have no effect. You can move as many sliders as you want.
                         </div></div>

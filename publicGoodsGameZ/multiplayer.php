@@ -52,7 +52,7 @@
 		<script>		
 		function KeyPress(e) {
 			var evtobj = window.event? event : e;
-			if (evtobj.keyCode == 90 && evtobj.ctrlKey && evtobj.shiftKey) {
+			if (evtobj.keyCode === 90 && evtobj.ctrlKey && evtobj.shiftKey) {
 				$.ajax({
 					type: "POST",
 					url: "../publicGoodsGame/back/showsession.php",

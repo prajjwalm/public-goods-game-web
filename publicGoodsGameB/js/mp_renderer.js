@@ -141,21 +141,24 @@ function SocRenderer(pop, data) {
 
                     if (j === roompos) {
                         $("#contrib .range-slider__range").attr('max', Math.round(this.member_cash[roompos]));
-
                         $("#contrib .range-slider__range").prop('value', 0);
                         $("#contrib .range-slider__value").text('0');
-                        $("#rp .range-slider__range").prop('value', -MIN/2);
-                        $("#rp .range-slider__value").prop('text', -MIN/2);
-
 
                         let cash_deductable = RP_FACTOR*this.member_cash[roompos];
-
                         let member_cash_alias = this.member_cash;
                         $("#penalties .range-slider__range").each (function (idx) {
                             let minVal = -Math.round(member_cash_alias[idx]<cash_deductable ? member_cash_alias[idx]:cash_deductable);
                             if (minVal < MIN) minVal = MIN;
                             $(this).attr('min', minVal);
                         });
+                        if ($("#rp").is(":visible")) {
+                            $("#rp .range-slider__range").prop('value', MIN/2);
+                            $("#rp .range-slider__value").text('' + MIN/2);
+                        } else {
+                            $("#rp .range-slider__range").prop('value', 0);
+                            $("#rp .range-slider__value").text('0');
+                        }
+
                     }
 
                 }
@@ -167,18 +170,23 @@ function SocRenderer(pop, data) {
 
                 if (i === roompos) {
                     $("#contrib .range-slider__range").attr('max', Math.round(this.member_cash[roompos]));
+                    $("#contrib .range-slider__range").prop('value', 0);
+                    $("#contrib .range-slider__value").text('0');
 
-                    // both sliders, contrib and rp
-                    $(".range-slider__range").prop('value', 0);
-                    $(".range-slider__value").text('0');
                     let cash_deductable = RP_FACTOR*this.member_cash[roompos];
-
                     let member_cash_alias = this.member_cash;
                     $("#penalties .range-slider__range").each (function (idx) {
                         let minVal = -Math.round(member_cash_alias[idx]<cash_deductable ? member_cash_alias[idx]:cash_deductable);
                         if (minVal < MIN) minVal = MIN;
                         $(this).attr('min', minVal);
                     });
+                    if ($("#rp").is(":visible")) {
+                        $("#rp .range-slider__range").prop('value', MIN/2);
+                        $("#rp .range-slider__value").text('' + MIN/2);
+                    } else {
+                        $("#rp .range-slider__range").prop('value', 0);
+                        $("#rp .range-slider__value").text('0');
+                    }
                 }
 
                 $("div.dynamic div.member_cash:eq("+i+") .m_cash").text("$" + Math.round(this.member_cash[i]));

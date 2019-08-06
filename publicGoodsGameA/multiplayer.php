@@ -79,13 +79,13 @@
 
 	<body>    
     <?php if ($_SESSION['rno'] == 0): ?>
-    <div id = "intro">
+    <!--div id = "intro">
         <div id = "intro-popup">
             <button id = "intro-close"><i class="fas fa-times-circle"></i></button>
             <div id = "intro-img-space">
-                <!--img class = "intro-img" src = "../publicGoodsGame/assets/images/info0_c.png"></img>
+                < !--img class = "intro-img" src = "../publicGoodsGame/assets/images/info0_c.png"></img>
                 <img class = "intro-img" src = "../publicGoodsGame/assets/images/info1_c.png" style = "display:none;"></img>
-                <img class = "intro-img" src = "../publicGoodsGame/assets/images/info2_c.png" style = "display:none;"></img  #NORP-->
+                <img class = "intro-img" src = "../publicGoodsGame/assets/images/info2_c.png" style = "display:none;"></img  #NORP-- >
                 <img class = "intro-img" src = "../publicGoodsGame/assets/images/info0.png"></img>
                 <img class = "intro-img" src = "../publicGoodsGame/assets/images/info1.png" style = "display:none;"></img>
                 <img class = "intro-img" src = "../publicGoodsGame/assets/images/info2.png" style = "display:none;"></img>
@@ -94,7 +94,7 @@
             <button id = "intro-next"> <i class="fas fa-chevron-circle-right"></i> </button>
             <button id = "intro-prev"> <i class="fas fa-chevron-circle-left"></i> </button>
         </div>
-    </div>
+    </div-->
     <?php endif ?>
 	<div id = "main">
 		<div id = "gamezone">

@@ -47,7 +47,7 @@ function poll_payoff() {
 						$("#ok").prop('disabled', false);
 						$("#contrib").hide();
 						$("#rp").show();         // #NORP
-						
+
 						if ("rnd" in data) {
 							$("#rno").text('' + Math.floor(data['rnd']/2));
 						} else {
