@@ -11,7 +11,7 @@
 	
 	session_start();
 
-	require_once("path.php");
+	require_once("pathU.php");
 
 	// storing session and sanity check
 	$grid = $_SESSION['grid'];

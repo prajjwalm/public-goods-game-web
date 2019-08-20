@@ -34,7 +34,7 @@
 		exit(json_encode($return));	
 	}
 		
-	require_once("path.php");
+	require_once("pathU.php");
 	
 	if (!is_int($_SESSION['rno'])) {
 		$return['status'] = "error";

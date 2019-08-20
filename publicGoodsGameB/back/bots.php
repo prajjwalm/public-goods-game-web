@@ -6,7 +6,7 @@
         die( header( 'location: ../index.php' ) );
     }
     
-    require_once("path.php");
+    require_once("pathU.php");
 
 
     interface Bot {
